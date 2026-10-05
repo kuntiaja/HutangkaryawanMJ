@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cek Kas Bon Karyawan</title>
 <style>
-:root{--paper:#f6f1e7;--card:#fffdf8;--ink:#1f2a37;--mute:#6b7280;--line:#e2d9c6;--red:#b3261e;--green:#1b6e4a;--brand:#23405c}
+:root{--paper:#f6f1e7;--card:#fffdf8;--ink:#1f2a37;--mute:#6b7280;--line:#e2d9c6;--red:#b3261e;--blue:#1d4ed8;--green:#1b6e4a;--brand:#23405c}
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.4 "Segoe UI",Roboto,sans-serif;padding:8px;height:100vh;display:flex;flex-direction:column;justify-content:center}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.4 "Segoe UI",Roboto,sans-serif;padding:8px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
 .wrap{max-width:480px;width:100%;margin:0 auto}
 header{text-align:center;margin-bottom:8px}
-header small{letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-size:10px}
-h1{font:700 20px/1.1 Georgia,serif;margin:2px 0 0;color:var(--brand)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:8px;box-shadow:0 2px 4px rgba(0,0,0,.02)}
+header small{letter-spacing:.14em;text-transform:uppercase;color:var(--brand);font-size:13px;font-weight:800;display:block;margin-bottom:2px}
+h1{font:700 18px/1.1 Georgia,serif;margin:0;color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;box-shadow:0 2px 4px rgba(0,0,0,.02)}
 label{display:block;font-size:13px;color:var(--mute);margin:0 0 2px}
 select,input{width:100%;font:inherit;padding:10px;border:1px solid #c9bfa8;border-radius:8px;background:#fff;color:var(--ink);margin-bottom:10px}
 input{letter-spacing:.2em;font-size:18px;text-align:center}
@@ -22,23 +22,31 @@ button:disabled{opacity:.6}
 #err{color:var(--red);font-size:12px;text-align:center;min-height:16px;margin:4px 0 0}
 .who{font-size:13px;color:var(--mute);text-align:center}
 .name{font:700 18px Georgia,serif;text-align:center;margin:2px 0 8px}
-.big{font:700 28px/1.1 Georgia,serif;text-align:center;margin:2px 0}
+.big{font:700 26px/1.1 Georgia,serif;text-align:center;margin:2px 0}
 .big.red{color:var(--red)}.big.green{color:var(--green)}
 .sum{display:flex;gap:8px;margin-top:10px}
 .sum div{flex:1;background:var(--paper);border-radius:8px;padding:8px;font-size:12px;color:var(--mute);text-align:center}
-.sum b{display:block;color:var(--ink);font-size:14px}
-.tw{max-height:160px;overflow-y:auto}
-table{border-collapse:collapse;width:100%;font-size:12px}
-th{text-align:left;font-size:11px;color:var(--mute);text-transform:uppercase;position:sticky;top:0;background:var(--card);border-bottom:2px solid var(--line);padding:4px}
-td{padding:6px 4px;border-bottom:1px dashed var(--line)}
-.r{text-align:right;white-space:nowrap}.neg{color:var(--red)}.pos{color:var(--green)}
+.sum b{display:block;color:var(--ink);font-size:13px}
+.tw{max-height:150px;overflow-y:auto;width:100%}
+table{border-collapse:collapse;width:100%;font-size:11px;table-layout:fixed}
+th, td{overflow:hidden;text-overflow:ellipsis;word-break:break-word}
+th{text-align:left;font-size:11px;color:var(--mute);text-transform:none;font-weight:600;position:sticky;top:0;background:var(--card);border-bottom:2px solid var(--line);padding:4px 2px}
+td{padding:6px 2px;border-bottom:1px dashed var(--line)}
+th:nth-child(1), td:nth-child(1){width:18%}
+th:nth-child(2), td:nth-child(2){width:26%}
+th:nth-child(3), td:nth-child(3){width:18%;text-align:right}
+th:nth-child(4), td:nth-child(4){width:18%;text-align:right}
+th:nth-child(5), td:nth-child(5){width:20%;text-align:right}
+.r{text-align:right;white-space:nowrap}
+.neg{color:var(--red);font-weight:600}
+.pos{color:var(--blue);font-weight:600}
 .note{font-size:11px;color:var(--mute);text-align:center;margin:4px 0 0}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><small>Merdeka Jaya</small><h1>Cek Kas Bon Karyawan</h1></header>
+<header><small>MERDEKA JAYA</small><h1>Cek Kas Bon Karyawan</h1></header>
   
 <section id="login" class="card">
 <label for="nama">Nama Anda</label>
@@ -56,11 +64,11 @@ td{padding:6px 4px;border-bottom:1px dashed var(--line)}
 <div class="who" id="lbl">Sisa hutang Anda</div>
 <div class="big" id="saldo"></div>
 <div class="who" style="font-size:11px">Per tanggal <span id="asof"></span></div>
-<div class="sum"><div>Total kas bon<b id="tb"></b></div><div>Total dibayar<b id="tp"></b></div></div>
+<div class="sum"><div>Total Kas Bon<b id="tb"></b></div><div>Total Dibayar<b id="tp"></b></div></div>
 </div>
-<div class="card" style="padding:10px 14px">
-<div class="who" style="margin-bottom:4px;text-align:left">Riwayat Transaksi</div>
-<div class="tw"><table><thead><tr><th>Tgl</th><th>Ket</th><th class="r">Kas bon</th><th class="r">Bayar</th><th class="r">Sisa</th></tr></thead><tbody id="rows"></tbody></table></div>
+<div class="card" style="padding:10px 12px">
+<div class="who" style="margin-bottom:4px;text-align:left;font-weight:600">Riwayat Transaksi</div>
+<div class="tw"><table><thead><tr><th>Tanggal</th><th>Ket</th><th class="r">Kas Bon</th><th class="r">Bayar</th><th class="r">Sisa</th></tr></thead><tbody id="rows"></tbody></table></div>
 </div>
 <button class="ghost" id="out-btn">Keluar / Ganti Akun</button>
 </section>
@@ -69,7 +77,7 @@ td{padding:6px 4px;border-bottom:1px dashed var(--line)}
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCE67xliISB3QhnNUvhZWIfW2tcGAJNlYBDCR3HMG4LpHufwcVoVNcxO9Mm3ZsHyp1rg/exec'; // <-- Ganti dengan URL Web App Apps Script Anda
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCE67xliISB3QhnNUvhZWIfW2tcGAJNlYBDCR3HMG4LpHufwcVoVNcxO9Mm3ZsHyp1rg/exec';
 
 const $=id=>document.getElementById(id);
 const rp=n=>'Rp '+Math.abs(n).toLocaleString('id-ID');
@@ -77,7 +85,6 @@ const tgl=s=>new Date(s+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',m
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const BTN='Lihat Hutang Saya';
 
-// Ambil daftar nama dari Apps Script
 fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'daftarNama' }) })
   .then(res => res.json())
   .then(res => {
