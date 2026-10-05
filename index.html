@@ -52,7 +52,7 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
   
 <section id="login" class="card">
 <label for="nama">Nama Anda</label>
-<select id="nama"><option value="">Memuat nama...</option></select>
+<select id="nama"><option value="">Sedang menghubungkan ke server...</option></select>
 <label for="pin">PIN (6 angka dari admin)</label>
 <input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••">
 <button id="go">Lihat Hutang Saya</button>
@@ -100,10 +100,12 @@ fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'daftarNama' 
     if(res.ok) {
       $('nama').innerHTML='<option value="">— pilih nama —</option>'+res.data.map(x=>`<option>${esc(x)}</option>`).join('');
     } else {
-      $('err').textContent='Gagal memuat daftar nama.';
+      $('err').textContent='Gagal memuat daftar nama.';$('nama').innerHTML='<option value="">Gagal memuat</option>';
     }
   })
-  .catch(() => {$('err').textContent='Gagal terhubung ke server.'});
+  .catch(() => {
+    $('err').textContent='Gagal terhubung ke server.';$('nama').innerHTML='<option value="">Gagal terhubung</option>';
+  });
 
 function show(o){
   const R=o.rows || [], s=R.length ? Number(R[R.length-1][4]) || 0 : 0;
