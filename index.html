@@ -7,8 +7,9 @@
 <style>
 :root{--paper:#f6f1e7;--card:#fffdf8;--ink:#1f2a37;--mute:#6b7280;--line:#e2d9c6;--red:#b3261e;--blue:#1d4ed8;--green:#1b6e4a;--brand:#23405c}
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:12px/1.2 "Segoe UI",Roboto,sans-serif;padding:14px 10px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
-.wrap{max-width:480px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:4px}
+body{margin:0;background:var(--paper);color:var(--ink);font:12px/1.2 "Segoe UI",Roboto,sans-serif;padding:10px;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.wrap{max-width:480px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:6px;flex:1;min-height:0}
+#out{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px}
 header{text-align:center;margin-bottom:2px}
 header h1{font:800 20px/1.1 Georgia,serif;margin:0 0 1px;color:var(--brand);letter-spacing:.04em}
 header p{font:600 11px/1.1 "Segoe UI",Roboto,sans-serif;margin:0;color:var(--mute);text-transform:uppercase;letter-spacing:.1em}
@@ -27,7 +28,7 @@ button:disabled{opacity:.6}
 .sum{display:flex;gap:6px;margin-top:6px}
 .sum div{flex:1;background:var(--paper);border-radius:6px;padding:4px;font-size:10px;color:var(--mute);text-align:center}
 .sum b{display:block;color:var(--ink);font-size:11px}
-.tw{max-height:300px;overflow-y:auto;width:100%}
+.tw{flex:1;min-height:0;overflow-y:auto;width:100%}
 table{border-collapse:collapse;width:100%;font-size:11px;table-layout:fixed}
 th, td{overflow:hidden;text-overflow:ellipsis;word-break:break-word}
 th{text-align:left;font-size:10px;color:var(--mute);font-weight:600;position:sticky;top:0;background:var(--card);border-bottom:2px solid var(--line);padding:2px}
@@ -69,7 +70,7 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
 <div class="sum"><div>Total Kas Bon<b id="tb"></b></div><div>Total Dibayar<b id="tp"></b></div></div>
 </div>
  
-<div class="card" style="padding:6px 10px">
+<div class="card" style="padding:6px 10px;flex:1;min-height:0;display:flex;flex-direction:column">
 <div class="who" style="margin-bottom:2px;text-align:left;font-weight:600">Riwayat Transaksi</div>
 <div class="tw">
   <table>
