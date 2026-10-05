@@ -2,161 +2,151 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Cek Kas Bon Karyawan</title>
 <style>
-:root{--paper:#f6f1e7;--card:#fffdf8;--ink:#1f2a37;--mute:#6b7280;--line:#e2d9c6;--red:#b3261e;--green:#1b6e4a;--brand:#23405c}
+:root{--paper:#f6f1e7;--card:#fffdf8;--ink:#1f2a37;--mute:#6b7280;--line:#e2d9c6;--red:#b3261e;--blue:#1d4ed8;--green:#1b6e4a;--brand:#23405c}
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 "Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:16px}
-.wrap{max-width:520px;margin:0 auto}
-header{padding:8px 4px 16px}
-header small{letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-size:12px}
-h1{font:700 26px/1.2 Georgia,"Times New Roman",serif;margin:4px 0 0;color:var(--brand)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
-label{display:block;font-size:14px;color:var(--mute);margin:0 0 4px}
-select,input{width:100%;font:inherit;padding:12px;border:1px solid #c9bfa8;border-radius:10px;background:#fff;color:var(--ink);margin-bottom:14px}
-input{letter-spacing:.3em;font-size:20px}
-button{font:inherit;font-weight:600;width:100%;padding:13px;border:0;border-radius:10px;background:var(--brand);color:#fff;cursor:pointer}
-button.ghost{background:none;color:var(--brand);border:1px solid var(--brand);margin-top:6px}
-button:disabled{opacity:.6;cursor:default}
-#err{color:var(--red);font-size:14px;min-height:20px;margin:10px 0 0}
-.who{font-size:14px;color:var(--mute)}
-.name{font:700 20px Georgia,serif;margin:0 0 12px}
-.big{font:700 34px/1.1 Georgia,serif;margin:2px 0 4px}
+body{margin:0;background:var(--paper);color:var(--ink);font:12px/1.2 "Segoe UI",Roboto,sans-serif;padding:14px 10px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.wrap{max-width:480px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:4px}
+header{text-align:center;margin-bottom:2px}
+header h1{font:800 20px/1.1 Georgia,serif;margin:0 0 1px;color:var(--brand);letter-spacing:.04em}
+header p{font:600 11px/1.1 "Segoe UI",Roboto,sans-serif;margin:0;color:var(--mute);text-transform:uppercase;letter-spacing:.1em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;box-shadow:0 2px 4px rgba(0,0,0,.02)}
+label{display:block;font-size:11px;color:var(--mute);margin:0 0 2px}
+select,input{width:100%;font:inherit;padding:6px 8px;border:1px solid #c9bfa8;border-radius:6px;background:#fff;color:var(--ink);margin-bottom:6px}
+input{letter-spacing:.2em;font-size:15px;text-align:center}
+button{font:inherit;font-weight:600;width:100%;padding:8px;border:0;border-radius:6px;background:var(--brand);color:#fff;cursor:pointer}
+button.ghost{background:none;color:var(--brand);border:1px solid var(--brand);padding:6px;margin-top:2px}
+button:disabled{opacity:.6}
+#err{color:var(--red);font-size:11px;text-align:center;min-height:12px;margin:2px 0 0}
+.who{font-size:11px;color:var(--mute);text-align:center}
+.name{font:700 15px Georgia,serif;text-align:center;margin:1px 0 4px}
+.big{font:700 22px/1.1 Georgia,serif;text-align:center;margin:1px 0}
 .big.red{color:var(--red)}.big.green{color:var(--green)}
-.sum{display:flex;gap:10px;margin-top:14px}
-.sum div{flex:1;background:var(--paper);border-radius:10px;padding:10px;font-size:13px;color:var(--mute)}
-.sum b{display:block;color:var(--ink);font-size:15px}
-.tw{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:14px;min-width:420px}
-th{text-align:left;font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--line);padding:6px}
-td{padding:8px 6px;border-bottom:1px dashed var(--line);vertical-align:top}
-.r{text-align:right;white-space:nowrap}.neg{color:var(--red)}.pos{color:var(--green)}
-.note{font-size:13px;color:var(--mute);text-align:center;padding:4px 8px 20px}
+.sum{display:flex;gap:6px;margin-top:6px}
+.sum div{flex:1;background:var(--paper);border-radius:6px;padding:4px;font-size:10px;color:var(--mute);text-align:center}
+.sum b{display:block;color:var(--ink);font-size:11px}
+.tw{max-height:110px;overflow-y:auto;width:100%}
+table{border-collapse:collapse;width:100%;font-size:11px;table-layout:fixed}
+th, td{overflow:hidden;text-overflow:ellipsis;word-break:break-word}
+th{text-align:left;font-size:10px;color:var(--mute);font-weight:600;position:sticky;top:0;background:var(--card);border-bottom:2px solid var(--line);padding:2px}
+td{padding:4px 2px;border-bottom:1px dashed var(--line)}
+th:nth-child(1), td:nth-child(1){width:22%}
+th:nth-child(2), td:nth-child(2){width:38%}
+th:nth-child(3), td:nth-child(3){width:20%;text-align:right}
+th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
+.r{text-align:right;white-space:nowrap}
+.neg{color:var(--red);font-weight:600}
+.pos{color:var(--blue);font-weight:600}
+.note{font-size:10px;color:var(--mute);text-align:center;margin:2px 0 0}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><small>Merdeka Jaya</small><h1>Cek Kas Bon Karyawan</h1></header>
-
+<header>
+  <h1>MERDEKA JAYA</h1>
+  <p>Cek Kas Bon Karyawan</p>
+</header>
+  
 <section id="login" class="card">
 <label for="nama">Nama Anda</label>
-<select id="nama"><option value="">Memuat nama...</option></select>
+<select id="nama"><option value="">Sedang menghubungkan ke server...</option></select>
 <label for="pin">PIN (6 angka dari admin)</label>
 <input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••">
 <button id="go">Lihat Hutang Saya</button>
 <p id="err" role="alert"></p>
 </section>
-
+  
 <section id="out" hidden>
 <div class="card">
 <div class="who" id="jab"></div>
-<p class="name" id="nm"></p>
+<div class="name" id="nm"></div>
 <div class="who" id="lbl">Sisa hutang Anda</div>
 <div class="big" id="saldo"></div>
-<div class="who">Per data tanggal <span id="asof"></span></div>
-<div class="sum"><div>Total kas bon<b id="tb"></b></div><div>Total dibayar<b id="tp"></b></div></div>
+<div class="who" style="font-size:10px">Per tanggal <span id="asof"></span></div>
+<div class="sum"><div>Total Kas Bon<b id="tb"></b></div><div>Total Dibayar<b id="tp"></b></div></div>
 </div>
-<div class="card">
-<div class="who" style="margin-bottom:6px">Riwayat (terbaru di atas)</div>
-<div class="tw"><table><thead><tr><th>Tanggal</th><th>Keterangan</th><th class="r">Kas bon</th><th class="r">Bayar</th><th class="r">Sisa</th></tr></thead><tbody id="rows"></tbody></table></div>
+ 
+<div class="card" style="padding:6px 10px">
+<div class="who" style="margin-bottom:2px;text-align:left;font-weight:600">Riwayat Transaksi</div>
+<div class="tw">
+  <table>
+    <thead><tr><th>Tanggal</th><th>Ket</th><th class="r">Kas Bon</th><th class="r">Bayar</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
 </div>
-<button class="ghost" id="out-btn">Keluar</button>
+</div>
+ 
+<button class="ghost" id="out-btn">Keluar / Ganti Akun</button>
 </section>
-
-<p class="note">Data bersifat pribadi, jangan bagikan PIN Anda. Jika ada yang tidak sesuai, hubungi admin.</p>
+  
+<p class="note">Data bersifat pribadi, jangan bagikan PIN Anda.</p>
 </div>
-
+ 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCE67xliISB3QhnNUvhZWIfW2tcGAJNlYBDCR3HMG4LpHufwcVoVNcxO9Mm3ZsHyp1rg/exec';
-
-const $ = id => document.getElementById(id);
-const rp = n => 'Rp ' + Math.abs(Number(n) || 0).toLocaleString('id-ID');
-const tgl = s => new Date(s + 'T00:00:00').toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'});
-const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const BTN = 'Lihat Hutang Saya';
-
-// Kirim sebagai text/plain (tanpa header khusus) supaya tidak kena preflight CORS
-function api(payload) {
-  return fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-    .then(res => {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
-    });
+ 
+const $=id=>document.getElementById(id);
+const rp=n=>'Rp '+Math.abs(n).toLocaleString('id-ID');
+const tgl=s=>new Date(s+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'2-digit'});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const BTN='Lihat Hutang Saya';
+ 
+fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'daftarNama' }) })
+  .then(res => res.json())
+  .then(res => {
+    if(res.ok) {
+      $('nama').innerHTML='<option value="">— pilih nama —</option>'+res.data.map(x=>`<option>${esc(x)}</option>`).join('');
+    } else {
+      $('err').textContent='Gagal memuat daftar nama.';$('nama').innerHTML='<option value="">Gagal memuat</option>';
+    }
+  })
+  .catch(() => {
+    $('err').textContent='Gagal terhubung ke server.';$('nama').innerHTML='<option value="">Gagal terhubung</option>';
+  });
+ 
+function show(o){
+  const R=o.rows || [], s=R.length ? Number(R[R.length-1][4]) || 0 : 0;
+  $('jab').textContent=o.jabatan;
+  $('nm').textContent=o.nama;
+  $('asof').textContent=o.asof?tgl(o.asof):'-';
+  $('lbl').textContent=s>0?'Sisa hutang Anda':(s<0?'Kelebihan pembayaran':'Status');$('saldo').textContent=s===0?'Lunas 🎉':rp(s);
+  $('saldo').className='big '+(s>0?'red':'green');$('tb').textContent=rp(R.reduce((a,r)=>a+(Number(r[2])||0),0));
+  $('tp').textContent=rp(R.reduce((a,r)=>a+(Number(r[3])||0),0));$('rows').innerHTML = R.length ? R.slice().reverse().map(r=>
+    `<tr><td>${tgl(r[0])}</td><td>${esc(r[1])}</td><td class="r neg">${r[2] ? rp(Number(r[2])) : ''}</td><td class="r pos">${r[3] ? rp(Number(r[3])) : ''}</td></tr>`
+  ).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--mute)">Belum ada catatan.</td></tr>';
+  
+  $('login').hidden=true;
+  $('out').hidden=false;
 }
-
-function muatNama() {
-  $('nama').innerHTML = '<option value="">Memuat nama...</option>';
-  api({ action: 'daftarNama' })
-    .then(res => {
-      if (res.ok) {
-        $('nama').innerHTML = '<option value="">— pilih nama —</option>' +
-          res.data.map(x => `<option>${esc(x)}</option>`).join('');
-      } else {
-        $('nama').innerHTML = '<option value="">Gagal memuat</option>';
-        $('err').textContent = res.msg || 'Gagal memuat daftar nama.';
-      }
-    })
-    .catch(() => {
-      $('nama').innerHTML = '<option value="">Gagal terhubung</option>';
-      $('err').textContent = 'Gagal terhubung ke server. Muat ulang halaman.';
-    });
-}
-
-function show(o) {
-  const R = o.rows || [];
-  const s = R.length ? Number(R[R.length - 1][4]) || 0 : 0;
-  $('jab').textContent = o.jabatan;
-  $('nm').textContent = o.nama;
-  $('asof').textContent = o.asof ? tgl(o.asof) : '-';
-  $('lbl').textContent = s > 0 ? 'Sisa hutang Anda' : (s < 0 ? 'Kelebihan pembayaran' : 'Status');
-  $('saldo').textContent = s === 0 ? 'Lunas 🎉' : rp(s);
-  $('saldo').className = 'big ' + (s > 0 ? 'red' : 'green');
-  $('tb').textContent = rp(R.reduce((a, r) => a + (Number(r[2]) || 0), 0));
-  $('tp').textContent = rp(R.reduce((a, r) => a + (Number(r[3]) || 0), 0));
-  $('rows').innerHTML = R.length
-    ? R.slice().reverse().map(r =>
-        `<tr><td>${tgl(r[0])}</td><td>${esc(r[1])}</td>` +
-        `<td class="r neg">${r[2] ? rp(r[2]) : ''}</td>` +
-        `<td class="r pos">${r[3] ? rp(r[3]) : ''}</td>` +
-        `<td class="r">${rp(r[4])}</td></tr>`).join('')
-    : '<tr><td colspan="5">Belum ada catatan.</td></tr>';
-  $('login').hidden = true;
-  $('out').hidden = false;
-  window.scrollTo(0, 0);
-}
-
-function done() { $('go').disabled = false; $('go').textContent = BTN; }
-
-$('go').onclick = () => {
-  const n = $('nama').value, pin = $('pin').value.trim(), err = $('err');
-  err.textContent = '';
-  if (!n) { err.textContent = 'Pilih nama Anda dulu.'; return; }
-  if (!/^\d{6}$/.test(pin)) { err.textContent = 'PIN harus 6 angka.'; return; }
-  $('go').disabled = true;
-  $('go').textContent = 'Memeriksa…';
-  api({ action: 'cekHutang', nama: n, pin: pin })
-    .then(o => {
-      done();
-      if (o.ok) show(o); else err.textContent = o.msg || 'Terjadi kesalahan.';
-    })
-    .catch(() => {
-      done();
-      err.textContent = 'Terjadi kesalahan jaringan. Coba lagi.';
-    });
+ 
+function done(){$('go').disabled=false;$('go').textContent=BTN}
+ 
+$('go').onclick=()=>{
+  const n=$('nama').value,pin=$('pin').value.trim(),err=$('err');err.textContent='';
+  if(!n){err.textContent='Pilih nama Anda dulu.';return}
+  if(!/^\d{6}$/.test(pin)){err.textContent='PIN harus 6 angka.';return}
+  $('go').disabled=true;$('go').textContent='Memeriksa…';
+  
+  fetch(SCRIPT_URL, { 
+    method: 'POST', 
+    body: JSON.stringify({ action: 'cekHutang', nama: n, pin: pin }) 
+  })
+  .then(res => res.json())
+  .then(o => {
+    done();
+    if(o.ok) { show(o); } else { err.textContent = o.msg; }
+  })
+  .catch(() => {
+    done();
+    err.textContent='Terjadi kesalahan jaringan.';
+  });
 };
-
-$('pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('go').click(); });
-$('out-btn').onclick = () => {
-  $('out').hidden = true;
-  $('login').hidden = false;
-  $('pin').value = '';
-  $('rows').innerHTML = '';
-  $('saldo').textContent = '';
-};
-
-muatNama();
+ 
+$('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click()});
+$('out-btn').onclick=()=>{$('out').hidden=true;$('login').hidden=false;$('pin').value='';$('rows').innerHTML='';$('saldo').textContent=''};
 </script>
 </body>
 </html>
