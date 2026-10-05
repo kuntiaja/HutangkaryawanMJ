@@ -68,7 +68,7 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
 <div class="who" style="font-size:10px">Per tanggal <span id="asof"></span></div>
 <div class="sum"><div>Total Kas Bon<b id="tb"></b></div><div>Total Dibayar<b id="tp"></b></div></div>
 </div>
-
+ 
 <div class="card" style="padding:6px 10px">
 <div class="who" style="margin-bottom:2px;text-align:left;font-weight:600">Riwayat Transaksi</div>
 <div class="tw">
@@ -78,22 +78,22 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
   </table>
 </div>
 </div>
-
+ 
 <button class="ghost" id="out-btn">Keluar / Ganti Akun</button>
 </section>
   
 <p class="note">Data bersifat pribadi, jangan bagikan PIN Anda.</p>
 </div>
-
+ 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCE67xliISB3QhnNUvhZWIfW2tcGAJNlYBDCR3HMG4LpHufwcVoVNcxO9Mm3ZsHyp1rg/exec';
-
+ 
 const $=id=>document.getElementById(id);
 const rp=n=>'Rp '+Math.abs(n).toLocaleString('id-ID');
 const tgl=s=>new Date(s+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'2-digit'});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const BTN='Lihat Hutang Saya';
-
+ 
 fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'daftarNama' }) })
   .then(res => res.json())
   .then(res => {
@@ -106,7 +106,7 @@ fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'daftarNama' 
   .catch(() => {
     $('err').textContent='Gagal terhubung ke server.';$('nama').innerHTML='<option value="">Gagal terhubung</option>';
   });
-
+ 
 function show(o){
   const R=o.rows || [], s=R.length ? Number(R[R.length-1][4]) || 0 : 0;
   $('jab').textContent=o.jabatan;
@@ -114,16 +114,16 @@ function show(o){
   $('asof').textContent=o.asof?tgl(o.asof):'-';
   $('lbl').textContent=s>0?'Sisa hutang Anda':(s<0?'Kelebihan pembayaran':'Status');$('saldo').textContent=s===0?'Lunas 🎉':rp(s);
   $('saldo').className='big '+(s>0?'red':'green');$('tb').textContent=rp(R.reduce((a,r)=>a+(Number(r[2])||0),0));
-  $('tp').textContent=rp(R.reduce((a,r)=>a+(Number(r[3])\vert{}\vert{}0),0));$('rows').innerHTML = R.length ? R.slice().reverse().map(r=>
+  $('tp').textContent=rp(R.reduce((a,r)=>a+(Number(r[3])||0),0));$('rows').innerHTML = R.length ? R.slice().reverse().map(r=>
     `<tr><td>${tgl(r[0])}</td><td>${esc(r[1])}</td><td class="r neg">${r[2] ? rp(Number(r[2])) : ''}</td><td class="r pos">${r[3] ? rp(Number(r[3])) : ''}</td></tr>`
   ).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--mute)">Belum ada catatan.</td></tr>';
   
   $('login').hidden=true;
   $('out').hidden=false;
 }
-
+ 
 function done(){$('go').disabled=false;$('go').textContent=BTN}
-
+ 
 $('go').onclick=()=>{
   const n=$('nama').value,pin=$('pin').value.trim(),err=$('err');err.textContent='';
   if(!n){err.textContent='Pilih nama Anda dulu.';return}
@@ -144,7 +144,7 @@ $('go').onclick=()=>{
     err.textContent='Terjadi kesalahan jaringan.';
   });
 };
-
+ 
 $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click()});
 $('out-btn').onclick=()=>{$('out').hidden=true;$('login').hidden=false;$('pin').value='';$('rows').innerHTML='';$('saldo').textContent=''};
 </script>
