@@ -41,6 +41,16 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
 .neg{color:var(--red);font-weight:600}
 .pos{color:var(--blue);font-weight:600}
 .note{font-size:10px;color:var(--mute);text-align:center;margin:2px 0 0}
+.ok{color:var(--green);font-weight:600}
+#adm{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px}
+.tabs{display:flex;gap:6px}
+.tabs button{flex:1;padding:6px;font-size:12px;background:none;color:var(--brand);border:1px solid var(--brand)}
+.tabs button.on{background:var(--brand);color:#fff}
+.tr th:nth-child(1),.tr td:nth-child(1){width:31%;text-align:left}
+.tr th:nth-child(n+2),.tr td:nth-child(n+2){width:23%;text-align:right}
+.tp th:nth-child(1),.tp td:nth-child(1){width:42%;text-align:left}
+.tp th:nth-child(2),.tp td:nth-child(2){width:32%;text-align:left}
+.tp th:nth-child(3),.tp td:nth-child(3){width:26%;text-align:right;font-weight:700;letter-spacing:.08em}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -58,8 +68,43 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
 <input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••">
 <button id="go">Lihat Hutang Saya</button>
 <p id="err" role="alert"></p>
+<button class="ghost" id="adm-btn" type="button">Masuk Admin</button>
 </section>
   
+<section id="adm-login" class="card" hidden>
+<label for="apass">Password Admin</label>
+<input id="apass" type="password" autocomplete="off" placeholder="Password admin" style="letter-spacing:normal;font-size:15px">
+<button id="adm-go" type="button">Masuk</button>
+<p id="aerr" role="alert" style="color:var(--red);font-size:11px;text-align:center;min-height:12px;margin:2px 0 0"></p>
+<button class="ghost" id="adm-back" type="button">Kembali</button>
+</section>
+ 
+<section id="adm" hidden>
+<div class="card" style="padding:8px 10px">
+<div class="who">Total sisa kas bon semua karyawan</div>
+<div class="big red" id="a-total" style="font-size:20px"></div>
+</div>
+<div class="tabs">
+<button id="t-rekap" class="on" type="button">Rekap</button>
+<button id="t-pin" type="button">Nama &amp; PIN</button>
+</div>
+<div class="card" style="padding:6px 10px;flex:1;min-height:0;display:flex;flex-direction:column">
+<div class="tw" id="v-rekap">
+<table class="tr">
+<thead><tr><th>Nama</th><th>Kas Bon</th><th>Bayar</th><th>Sisa</th></tr></thead>
+<tbody id="a-rekap"></tbody>
+</table>
+</div>
+<div class="tw" id="v-pin" hidden>
+<table class="tp">
+<thead><tr><th>Nama</th><th>Jabatan</th><th>PIN</th></tr></thead>
+<tbody id="a-pin"></tbody>
+</table>
+</div>
+</div>
+<button class="ghost" id="adm-out" type="button">Keluar Admin</button>
+</section>
+ 
 <section id="out" hidden>
 <div class="card">
 <div class="who" id="jab"></div>
@@ -148,6 +193,59 @@ $('go').onclick=()=>{
  
 $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click()});
 $('out-btn').onclick=()=>{$('out').hidden=true;$('login').hidden=false;$('pin').value='';$('rows').innerHTML='';$('saldo').textContent=''};
+ 
+/* ===== ADMIN ===== */
+const num=n=>(n<0?'-':'')+Math.abs(Number(n)||0).toLocaleString('id-ID');
+ 
+function tab(t){
+  $('t-rekap').classList.toggle('on',t==='rekap');
+  $('t-pin').classList.toggle('on',t==='pin');
+  $('v-rekap').hidden=t!=='rekap';
+  $('v-pin').hidden=t!=='pin';
+}
+$('t-rekap').onclick=()=>tab('rekap');
+$('t-pin').onclick=()=>tab('pin');
+ 
+$('adm-btn').onclick=()=>{$('err').textContent='';$('login').hidden=true;$('adm-login').hidden=false;$('apass').focus()};
+$('adm-back').onclick=()=>{$('adm-login').hidden=true;$('login').hidden=false;$('apass').value='';$('aerr').textContent=''};
+ 
+function showAdm(o){
+  const L=o.rows||[];
+  $('a-total').textContent=(o.totalSisa<0?'-':'')+rp(o.totalSisa||0);
+  $('a-rekap').innerHTML=L.length
+    ? L.slice().sort((a,b)=>b.sisa-a.sisa).map(r=>
+        `<tr><td>${esc(r.nama)}</td><td class="r">${num(r.bon)}</td><td class="r">${num(r.bayar)}</td><td class="r ${r.sisa>0?'neg':'ok'}">${num(r.sisa)}</td></tr>`).join('')
+    : '<tr><td colspan="4" style="text-align:center;color:var(--mute)">Belum ada karyawan.</td></tr>';
+  $('a-pin').innerHTML=L.length
+    ? L.map(r=>
+        `<tr><td>${esc(r.nama)}</td><td>${esc(r.jabatan)}</td><td>${r.pin?esc(r.pin):'-'}</td></tr>`).join('')
+    : '<tr><td colspan="3" style="text-align:center;color:var(--mute)">Belum ada karyawan.</td></tr>';
+  tab('rekap');
+  $('adm-login').hidden=true;
+  $('adm').hidden=false;
+}
+ 
+$('adm-go').onclick=()=>{
+  const p=$('apass').value,err=$('aerr');err.textContent='';
+  if(!p){err.textContent='Isi password admin.';return}
+  $('adm-go').disabled=true;$('adm-go').textContent='Memeriksa…';
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'adminData',pass:p})})
+    .then(res=>res.json())
+    .then(o=>{
+      $('adm-go').disabled=false;$('adm-go').textContent='Masuk';
+      if(o.ok){$('apass').value='';showAdm(o)}else{err.textContent=o.msg||'Gagal.'}
+    })
+    .catch(()=>{
+      $('adm-go').disabled=false;$('adm-go').textContent='Masuk';
+      err.textContent='Terjadi kesalahan jaringan.';
+    });
+};
+$('apass').addEventListener('keydown',e=>{if(e.key==='Enter')$('adm-go').click()});
+ 
+$('adm-out').onclick=()=>{
+  $('adm').hidden=true;$('login').hidden=false;
+  $('a-rekap').innerHTML='';$('a-pin').innerHTML='';$('a-total').textContent='';$('apass').value='';
+};
 </script>
 </body>
 </html>
