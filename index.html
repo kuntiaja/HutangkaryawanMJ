@@ -112,7 +112,7 @@ function show(o){
   const R=o.rows || [], s=R.length ? Number(R[R.length-1][4]) || 0 : 0;
   $('jab').textContent=o.jabatan;
   $('nm').textContent=o.nama;
-  $('asof').textContent=o.asof?tgl(o.asof):'-';
+  $('asof').textContent=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric',timeZone:'Asia/Jakarta'});
   $('lbl').textContent=s>0?'Sisa hutang Anda':(s<0?'Kelebihan pembayaran':'Status');$('saldo').textContent=s===0?'Lunas 🎉':rp(s);
   $('saldo').className='big '+(s>0?'red':'green');$('tb').textContent=rp(R.reduce((a,r)=>a+(Number(r[2])||0),0));
   $('tp').textContent=rp(R.reduce((a,r)=>a+(Number(r[3])||0),0));$('rows').innerHTML = R.length ? R.slice().reverse().map(r=>
