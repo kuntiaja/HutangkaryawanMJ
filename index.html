@@ -99,13 +99,18 @@ fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'daftarNama' 
   .catch(() => {$('err').textContent='Gagal terhubung ke server.'});
 
 function show(o){
-  const R=o.rows,s=R.length?R[R.length-1][4]:0;
-  $('jab').textContent=o.jabatan;$('nm').textContent=o.nama;$('asof').textContent=o.asof?tgl(o.asof):'-';
+  const R=o.rows, s=R.length ? Number(R[R.length-1][4]) || 0 : 0;
+  $('jab').textContent=o.jabatan;
+  $('nm').textContent=o.nama;
+  $('asof').textContent=o.asof?tgl(o.asof):'-';
   $('lbl').textContent=s>0?'Sisa hutang Anda':(s<0?'Kelebihan pembayaran':'Status');$('saldo').textContent=s===0?'Lunas 🎉':rp(s);
-  $('saldo').className='big '+(s>0?'red':'green');$('tb').textContent=rp(R.reduce((a,r)=>a+r[2],0));
-  $('tp').textContent=rp(R.reduce((a,r)=>a+r[3],0));   // Kolom sisa (r[4]) sudah dihapus dari render baris tabel di bawah ini:$('rows').innerHTML=R.slice().reverse().map(r=>`<tr><td>${tgl(r[0])}</td><td>${esc(r[1])}</td><td class="r neg">${r[2]?rp(r[2]):''}</td><td class="r pos">${r[3]?rp(r[3]):''}</td></tr>`).join('')||'<tr><td colspan="4">Belum ada catatan.</td></tr>';
-  $('login').hidden=true;$('out').hidden=false;
+  $('saldo').className='big '+(s>0?'red':'green');$('tb').textContent=rp(R.reduce((a,r)=>a+(Number(r[2])||0),0));
+  $('tp').textContent=rp(R.reduce((a,r)=>a+(Number(r[3])\vert{}\vert{}0),0));      // Render ulang tabel riwayat transaksi (Kolom r[4] sisa sengaja tidak ditampilkan di baris)$('rows').innerHTML=R.slice().reverse().map(r=>`<tr><td>${tgl(r[0])}</td><td>${esc(r[1])}</td><td class="r neg">${r[2]?rp(Number(r[2])):''}</td><td class="r pos">${r[3]?rp(Number(r[3])):''}</td></tr>`).join('')||'<tr><td colspan="4">Belum ada catatan.</td></tr>';
+  
+  $('login').hidden=true;
+  $('out').hidden=false;
 }
+
 function done(){$('go').disabled=false;$('go').textContent=BTN}
 
 $('go').onclick=()=>{
