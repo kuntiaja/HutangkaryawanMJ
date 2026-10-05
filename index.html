@@ -7,12 +7,12 @@
 <style>
 :root{--paper:#f6f1e7;--card:#fffdf8;--ink:#1f2a37;--mute:#6b7280;--line:#e2d9c6;--red:#b3261e;--blue:#1d4ed8;--green:#1b6e4a;--brand:#23405c}
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.4 "Segoe UI",Roboto,sans-serif;padding:8px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.4 "Segoe UI",Roboto,sans-serif;padding:12px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .wrap{max-width:480px;width:100%;margin:0 auto}
-header{text-align:center;margin-bottom:8px}
-header small{letter-spacing:.14em;text-transform:uppercase;color:var(--brand);font-size:13px;font-weight:800;display:block;margin-bottom:2px}
-h1{font:700 18px/1.1 Georgia,serif;margin:0;color:var(--ink)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;box-shadow:0 2px 4px rgba(0,0,0,.02)}
+header{text-align:center;margin-bottom:10px}
+header h1{font:800 24px/1.1 Georgia,serif;margin:0 0 2px;color:var(--brand);letter-spacing:.04em}
+header p{font:600 13px/1.2 "Segoe UI",Roboto,sans-serif;margin:0;color:var(--mute);text-transform:uppercase;letter-spacing:.1em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:8px;box-shadow:0 2px 4px rgba(0,0,0,.02)}
 label{display:block;font-size:13px;color:var(--mute);margin:0 0 2px}
 select,input{width:100%;font:inherit;padding:10px;border:1px solid #c9bfa8;border-radius:8px;background:#fff;color:var(--ink);margin-bottom:10px}
 input{letter-spacing:.2em;font-size:18px;text-align:center}
@@ -46,7 +46,10 @@ th:nth-child(5), td:nth-child(5){width:20%;text-align:right}
 </head>
 <body>
 <div class="wrap">
-<header><small>MERDEKA JAYA</small><h1>Cek Kas Bon Karyawan</h1></header>
+<header>
+  <h1>MERDEKA JAYA</h1>
+  <p>Cek Kas Bon Karyawan</p>
+</header>
   
 <section id="login" class="card">
 <label for="nama">Nama Anda</label>
