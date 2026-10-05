@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Cek Kas Bon Karyawan</title>
+<style>
+:root{--paper:#f6f1e7;--card:#fffdf8;--ink:#1f2a37;--mute:#6b7280;--line:#e2d9c6;--red:#b3261e;--green:#1b6e4a;--brand:#23405c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 "Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:16px}
+.wrap{max-width:520px;margin:0 auto}
+header{padding:8px 4px 16px}
+header small{letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-size:12px}
+h1{font:700 26px/1.2 Georgia,"Times New Roman",serif;margin:4px 0 0;color:var(--brand)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+label{display:block;font-size:14px;color:var(--mute);margin:0 0 4px}
+select,input{width:100%;font:inherit;padding:12px;border:1px solid #c9bfa8;border-radius:10px;background:#fff;color:var(--ink);margin-bottom:14px}
+input{letter-spacing:.3em;font-size:20px}
+button{font:inherit;font-weight:600;width:100%;padding:13px;border:0;border-radius:10px;background:var(--brand);color:#fff;cursor:pointer}
+button.ghost{background:none;color:var(--brand);border:1px solid var(--brand);margin-top:6px}
+button:disabled{opacity:.6}
+#err{color:var(--red);font-size:14px;min-height:20px;margin:10px 0 0}
+.who{font-size:14px;color:var(--mute)}
+.name{font:700 20px Georgia,serif;margin:0 0 12px}
+.big{font:700 34px/1.1 Georgia,serif;margin:2px 0 4px}
+.big.red{color:var(--red)}.big.green{color:var(--green)}
+.sum{display:flex;gap:10px;margin-top:14px}
+.sum div{flex:1;background:var(--paper);border-radius:10px;padding:10px;font-size:13px;color:var(--mute)}
+.sum b{display:block;color:var(--ink);font-size:15px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:420px}
+th{text-align:left;font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--line);padding:6px}
+td{padding:8px 6px;border-bottom:1px dashed var(--line);vertical-align:top}
+.r{text-align:right;white-space:nowrap}.neg{color:var(--red)}.pos{color:var(--green)}
+.note{font-size:13px;color:var(--mute);text-align:center;padding:4px 8px 20px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><small>Merdeka Jaya</small><h1>Cek Kas Bon Karyawan</h1></header>
+  
+<section id="login" class="card">
+<label for="nama">Nama Anda</label>
+<select id="nama"></select>
+<label for="pin">PIN (6 angka dari admin)</label>
+<input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••">
+<button id="go">Lihat Hutang Saya</button>
+<p id="err" role="alert"></p>
+</section>
+  
+<section id="out" hidden>
+<div class="card">
+<div class="who" id="jab"></div>
+<p class="name" id="nm"></p>
+<div class="who" id="lbl">Sisa hutang Anda</div>
+<div class="big" id="saldo"></div>
+<div class="who">Per data tanggal <span id="asof"></span></div>
+<div class="sum"><div>Total kas bon<b id="tb"></b></div><div>Total dibayar<b id="tp"></b></div></div>
+</div>
+<div class="card">
+<div class="who" style="margin-bottom:6px">Riwayat (terbaru di atas)</div>
+<div class="tw"><table><thead><tr><th>Tanggal</th><th>Keterangan</th><th class="r">Kas bon</th><th class="r">Bayar</th><th class="r">Sisa</th></tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+<button class="ghost" id="out-btn">Keluar</button>
+</section>
+  
+<p class="note">Data bersifat pribadi, jangan bagikan PIN Anda. Jika ada yang tidak sesuai, hubungi admin.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const rp=n=>'Rp '+Math.abs(n).toLocaleString('id-ID');
+const tgl=s=>new Date(s+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const BTN='Lihat Hutang Saya';
+
+google.script.run
+  .withSuccessHandler(n=>{
+    $('nama').innerHTML='<option value="">— pilih nama —</option>'+n.map(x=>`<option>${esc(x)}</option>`).join('');
+  })
+  .withFailureHandler(err=>{
+    $('err').textContent='Gagal memuat daftar nama: ' + (err.message || 'Kesalahan koneksi');
+  })
+  .daftarNama();
+  
+function show(o){
+  const R=o.rows,s=R.length?R[R.length-1][4]:0;
+  $('jab').textContent=o.jabatan;$('nm').textContent=o.nama;$('asof').textContent=o.asof?tgl(o.asof):'-';
+  $('lbl').textContent=s>0?'Sisa hutang Anda':(s<0?'Kelebihan pembayaran':'Status');$('saldo').textContent=s===0?'Lunas 🎉':rp(s);
+  $('saldo').className='big '+(s>0?'red':'green');$('tb').textContent=rp(R.reduce((a,r)=>a+r[2],0));
+  $('tp').textContent=rp(R.reduce((a,r)=>a+r[3],0));$('rows').innerHTML=R.slice().reverse().map(r=>`<tr><td>${tgl(r[0])}</td><td>${esc(r[1])}</td><td class="r neg">${r[2]?rp(r[2]):''}</td><td class="r pos">${r[3]?rp(r[3]):''}</td><td class="r">${rp(r[4])}</td></tr>`).join('')||'<tr><td colspan="5">Belum ada catatan.</td></tr>';
+  $('login').hidden=true;$('out').hidden=false;window.scrollTo(0,0);
+}
+function done(){$('go').disabled=false;$('go').textContent=BTN}
+
+$('go').onclick=()=>{
+  const n=$('nama').value,pin=$('pin').value.trim(),err=$('err');err.textContent='';
+  if(!n){err.textContent='Pilih nama Anda dulu.';return}
+  if(!/^\d{6}$/.test(pin)){err.textContent='PIN harus 6 angka.';return}
+  $('go').disabled=true;$('go').textContent='Memeriksa…';
+  
+  google.script.run
+    .withSuccessHandler(o=>{
+      done();
+      if(o.ok) { show(o); } else { err.textContent = o.msg; }
+    })
+    .withFailureHandler(err=>{
+      done();
+      err.textContent='Terjadi kesalahan sistem: ' + (err.message || 'Coba lagi.');
+    })
+    .cekHutang(n,pin);
+};
+
+$('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click()});
+$('out-btn').onclick=()=>{$('out').hidden=true;$('login').hidden=false;$('pin').value='';$('rows').innerHTML='';$('saldo').textContent=''};
+</script>
+</body>
+</html>
