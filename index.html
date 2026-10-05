@@ -32,10 +32,10 @@ table{border-collapse:collapse;width:100%;font-size:11px;table-layout:fixed}
 th, td{overflow:hidden;text-overflow:ellipsis;word-break:break-word}
 th{text-align:left;font-size:10px;color:var(--mute);text-transform:none;font-weight:600;position:sticky;top:0;background:var(--card);border-bottom:2px solid var(--line);padding:3px 2px}
 td{padding:5px 2px;border-bottom:1px dashed var(--line)}
-th:nth-child(1), td:nth-child(1){width:20%}
-th:nth-child(2), td:nth-child(2){width:36%}
-th:nth-child(3), td:nth-child(3){width:22%;text-align:right}
-th:nth-child(4), td:nth-child(4){width:22%;text-align:right}
+th:nth-child(1), td:nth-child(1){width:22%}
+th:nth-child(2), td:nth-child(2){width:38%}
+th:nth-child(3), td:nth-child(3){width:20%;text-align:right}
+th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
 .r{text-align:right;white-space:nowrap}
 .neg{color:var(--red);font-weight:600}
 .pos{color:var(--blue);font-weight:600}
@@ -103,7 +103,7 @@ function show(o){
   $('jab').textContent=o.jabatan;$('nm').textContent=o.nama;$('asof').textContent=o.asof?tgl(o.asof):'-';
   $('lbl').textContent=s>0?'Sisa hutang Anda':(s<0?'Kelebihan pembayaran':'Status');$('saldo').textContent=s===0?'Lunas 🎉':rp(s);
   $('saldo').className='big '+(s>0?'red':'green');$('tb').textContent=rp(R.reduce((a,r)=>a+r[2],0));
-  $('tp').textContent=rp(R.reduce((a,r)=>a+r[3],0));$('rows').innerHTML=R.slice().reverse().map(r=>`<tr><td>${tgl(r[0])}</td><td>${esc(r[1])}</td><td class="r neg">${r[2]?rp(r[2]):''}</td><td class="r pos">${r[3]?rp(r[3]):''}</td></tr>`).join('')||'<tr><td colspan="4">Belum ada catatan.</td></tr>';
+  $('tp').textContent=rp(R.reduce((a,r)=>a+r[3],0));   // Kolom sisa (r[4]) sudah dihapus dari render baris tabel di bawah ini:$('rows').innerHTML=R.slice().reverse().map(r=>`<tr><td>${tgl(r[0])}</td><td>${esc(r[1])}</td><td class="r neg">${r[2]?rp(r[2]):''}</td><td class="r pos">${r[3]?rp(r[3]):''}</td></tr>`).join('')||'<tr><td colspan="4">Belum ada catatan.</td></tr>';
   $('login').hidden=true;$('out').hidden=false;
 }
 function done(){$('go').disabled=false;$('go').textContent=BTN}
