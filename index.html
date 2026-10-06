@@ -7,32 +7,32 @@
 <style>
 :root{--paper:#f6f1e7;--card:#fffdf8;--ink:#1f2a37;--mute:#6b7280;--line:#e2d9c6;--red:#b3261e;--blue:#1d4ed8;--green:#1b6e4a;--brand:#23405c}
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:12px/1.2 "Segoe UI",Roboto,sans-serif;padding:10px;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
-.wrap{max-width:480px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:6px;flex:1;min-height:0}
-#out{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px}
-header{text-align:center;margin-bottom:2px}
-header h1{font:800 20px/1.1 Georgia,serif;margin:0 0 1px;color:var(--brand);letter-spacing:.04em}
-header p{font:600 11px/1.1 "Segoe UI",Roboto,sans-serif;margin:0;color:var(--mute);text-transform:uppercase;letter-spacing:.1em}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;box-shadow:0 2px 4px rgba(0,0,0,.02)}
-label{display:block;font-size:11px;color:var(--mute);margin:0 0 2px}
-select,input{width:100%;font:inherit;padding:6px 8px;border:1px solid #c9bfa8;border-radius:6px;background:#fff;color:var(--ink);margin-bottom:6px}
-input{letter-spacing:.2em;font-size:15px;text-align:center}
-button{font:inherit;font-weight:600;width:100%;padding:8px;border:0;border-radius:6px;background:var(--brand);color:#fff;cursor:pointer}
-button.ghost{background:none;color:var(--brand);border:1px solid var(--brand);padding:6px;margin-top:2px}
+body{margin:0;background:var(--paper);color:var(--ink);font:13px/1.25 "Segoe UI",Roboto,sans-serif;padding:7vh 6px 10px;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.wrap{max-width:600px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
+#out{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+header{text-align:center;margin-bottom:4px}
+header h1{font:800 22px/1.1 Georgia,serif;margin:0 0 2px;color:var(--brand);letter-spacing:.04em}
+header p{font:600 12px/1.1 "Segoe UI",Roboto,sans-serif;margin:0;color:var(--mute);text-transform:uppercase;letter-spacing:.1em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 14px;box-shadow:0 2px 4px rgba(0,0,0,.02)}
+label{display:block;font-size:12px;color:var(--mute);margin:0 0 3px}
+select,input{width:100%;font:inherit;padding:10px 10px;border:1px solid #c9bfa8;border-radius:6px;background:#fff;color:var(--ink);margin-bottom:10px}
+input{letter-spacing:.2em;font-size:16px;text-align:center}
+button{font:inherit;font-weight:600;width:100%;padding:11px;border:0;border-radius:6px;background:var(--brand);color:#fff;cursor:pointer}
+button.ghost{background:none;color:var(--brand);border:1px solid var(--brand);padding:9px;margin-top:4px}
 button:disabled{opacity:.6}
-#err{color:var(--red);font-size:11px;text-align:center;min-height:12px;margin:2px 0 0}
-.who{font-size:11px;color:var(--mute);text-align:center}
-.name{font:700 15px Georgia,serif;text-align:center;margin:1px 0 4px}
-.big{font:700 22px/1.1 Georgia,serif;text-align:center;margin:1px 0}
+#err{color:var(--red);font-size:12px;text-align:center;min-height:14px;margin:4px 0 0}
+.who{font-size:12px;color:var(--mute);text-align:center}
+.name{font:700 16px Georgia,serif;text-align:center;margin:2px 0 6px}
+.big{font:700 24px/1.1 Georgia,serif;text-align:center;margin:2px 0}
 .big.red{color:var(--red)}.big.green{color:var(--green)}
-.sum{display:flex;gap:6px;margin-top:6px}
-.sum div{flex:1;background:var(--paper);border-radius:6px;padding:4px;font-size:10px;color:var(--mute);text-align:center}
-.sum b{display:block;color:var(--ink);font-size:11px}
+.sum{display:flex;gap:8px;margin-top:8px}
+.sum div{flex:1;background:var(--paper);border-radius:6px;padding:6px;font-size:11px;color:var(--mute);text-align:center}
+.sum b{display:block;color:var(--ink);font-size:12px}
 .tw{flex:1;min-height:0;overflow-y:auto;width:100%}
-table{border-collapse:collapse;width:100%;font-size:11px;table-layout:fixed}
+table{border-collapse:collapse;width:100%;font-size:12px;table-layout:fixed}
 th, td{overflow:hidden;text-overflow:ellipsis;word-break:break-word}
-th{text-align:left;font-size:10px;color:var(--mute);font-weight:600;position:sticky;top:0;background:var(--card);border-bottom:2px solid var(--line);padding:2px}
-td{padding:4px 2px;border-bottom:1px dashed var(--line)}
+th{text-align:left;font-size:11px;color:var(--mute);font-weight:600;position:sticky;top:0;background:var(--card);border-bottom:2px solid var(--line);padding:3px}
+td{padding:6px 3px;border-bottom:1px dashed var(--line)}
 th:nth-child(1), td:nth-child(1){width:22%}
 th:nth-child(2), td:nth-child(2){width:38%}
 th:nth-child(3), td:nth-child(3){width:20%;text-align:right}
@@ -40,11 +40,11 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
 .r{text-align:right;white-space:nowrap}
 .neg{color:var(--red);font-weight:600}
 .pos{color:var(--blue);font-weight:600}
-.note{font-size:10px;color:var(--mute);text-align:center;margin:2px 0 0}
+.note{font-size:11px;color:var(--mute);text-align:center;margin:4px 0 0}
 .ok{color:var(--green);font-weight:600}
-#adm{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px}
-.tabs{display:flex;gap:6px}
-.tabs button{flex:1;padding:6px;font-size:12px;background:none;color:var(--brand);border:1px solid var(--brand)}
+#adm{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+.tabs{display:flex;gap:8px}
+.tabs button{flex:1;padding:8px;font-size:13px;background:none;color:var(--brand);border:1px solid var(--brand)}
 .tabs button.on{background:var(--brand);color:#fff}
 .tr th:nth-child(1),.tr td:nth-child(1){width:31%;text-align:left}
 .tr th:nth-child(n+2),.tr td:nth-child(n+2){width:23%;text-align:right}
@@ -60,7 +60,7 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
   <h1>MERDEKA JAYA</h1>
   <p>Cek Kas Bon Karyawan</p>
 </header>
-  
+
 <section id="login" class="card">
 <label for="nama">Nama Anda</label>
 <select id="nama"><option value="">Sedang menghubungkan ke server...</option></select>
@@ -70,25 +70,25 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
 <p id="err" role="alert"></p>
 <button class="ghost" id="adm-btn" type="button">Masuk Admin</button>
 </section>
-  
+
 <section id="adm-login" class="card" hidden>
 <label for="apass">Password Admin</label>
-<input id="apass" type="password" autocomplete="off" placeholder="Password admin" style="letter-spacing:normal;font-size:15px">
+<input id="apass" type="password" autocomplete="off" placeholder="Password admin" style="letter-spacing:normal;font-size:16px">
 <button id="adm-go" type="button">Masuk</button>
-<p id="aerr" role="alert" style="color:var(--red);font-size:11px;text-align:center;min-height:12px;margin:2px 0 0"></p>
+<p id="aerr" role="alert" style="color:var(--red);font-size:12px;text-align:center;min-height:14px;margin:4px 0 0"></p>
 <button class="ghost" id="adm-back" type="button">Kembali</button>
 </section>
- 
+
 <section id="adm" hidden>
-<div class="card" style="padding:8px 10px">
+<div class="card" style="padding:10px 12px">
 <div class="who">Total sisa kas bon semua karyawan</div>
-<div class="big red" id="a-total" style="font-size:20px"></div>
+<div class="big red" id="a-total" style="font-size:22px"></div>
 </div>
 <div class="tabs">
 <button id="t-rekap" class="on" type="button">Rekap</button>
 <button id="t-pin" type="button">Nama &amp; PIN</button>
 </div>
-<div class="card" style="padding:6px 10px;flex:1;min-height:0;display:flex;flex-direction:column">
+<div class="card" style="padding:8px 12px;flex:1;min-height:0;display:flex;flex-direction:column">
 <div class="tw" id="v-rekap">
 <table class="tr">
 <thead><tr><th>Nama</th><th>Kas Bon</th><th>Bayar</th><th>Sisa</th></tr></thead>
@@ -104,19 +104,19 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
 </div>
 <button class="ghost" id="adm-out" type="button">Keluar Admin</button>
 </section>
- 
+
 <section id="out" hidden>
 <div class="card">
 <div class="who" id="jab"></div>
 <div class="name" id="nm"></div>
 <div class="who" id="lbl">Sisa hutang Anda</div>
 <div class="big" id="saldo"></div>
-<div class="who" style="font-size:10px">Per tanggal <span id="asof"></span></div>
+<div class="who" style="font-size:11px">Per tanggal <span id="asof"></span></div>
 <div class="sum"><div>Total Kas Bon<b id="tb"></b></div><div>Total Dibayar<b id="tp"></b></div></div>
 </div>
- 
-<div class="card" style="padding:6px 10px;flex:1;min-height:0;display:flex;flex-direction:column">
-<div class="who" style="margin-bottom:2px;text-align:left;font-weight:600">Riwayat Transaksi</div>
+
+<div class="card" style="padding:8px 12px;flex:1;min-height:0;display:flex;flex-direction:column">
+<div class="who" style="margin-bottom:3px;text-align:left;font-weight:600">Riwayat Transaksi</div>
 <div class="tw">
   <table>
     <thead><tr><th>Tanggal</th><th>Ket</th><th class="r">Kas Bon</th><th class="r">Bayar</th></tr></thead>
@@ -124,22 +124,22 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
   </table>
 </div>
 </div>
- 
+
 <button class="ghost" id="out-btn">Keluar / Ganti Akun</button>
 </section>
-  
+
 <p class="note">Data bersifat pribadi, jangan bagikan PIN Anda.</p>
 </div>
- 
+
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCE67xliISB3QhnNUvhZWIfW2tcGAJNlYBDCR3HMG4LpHufwcVoVNcxO9Mm3ZsHyp1rg/exec';
- 
+
 const $=id=>document.getElementById(id);
 const rp=n=>'Rp '+Math.abs(n).toLocaleString('id-ID');
 const tgl=s=>new Date(s+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'2-digit'});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const BTN='Lihat Hutang Saya';
- 
+
 fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'daftarNama' }) })
   .then(res => res.json())
   .then(res => {
@@ -152,7 +152,7 @@ fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'daftarNama' 
   .catch(() => {
     $('err').textContent='Gagal terhubung ke server.';$('nama').innerHTML='<option value="">Gagal terhubung</option>';
   });
- 
+
 function show(o){
   const R=o.rows || [], s=R.length ? Number(R[R.length-1][4]) || 0 : 0;
   $('jab').textContent=o.jabatan;
@@ -163,19 +163,19 @@ function show(o){
   $('tp').textContent=rp(R.reduce((a,r)=>a+(Number(r[3])||0),0));$('rows').innerHTML = R.length ? R.slice().reverse().map(r=>
     `<tr><td>${tgl(r[0])}</td><td>${esc(r[1])}</td><td class="r neg">${r[2] ? rp(Number(r[2])) : ''}</td><td class="r pos">${r[3] ? rp(Number(r[3])) : ''}</td></tr>`
   ).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--mute)">Belum ada catatan.</td></tr>';
-  
+
   $('login').hidden=true;
   $('out').hidden=false;
 }
- 
+
 function done(){$('go').disabled=false;$('go').textContent=BTN}
- 
+
 $('go').onclick=()=>{
   const n=$('nama').value,pin=$('pin').value.trim(),err=$('err');err.textContent='';
   if(!n){err.textContent='Pilih nama Anda dulu.';return}
   if(!/^\d{6}$/.test(pin)){err.textContent='PIN harus 6 angka.';return}
   $('go').disabled=true;$('go').textContent='Memeriksa…';
-  
+
   fetch(SCRIPT_URL, { 
     method: 'POST', 
     body: JSON.stringify({ action: 'cekHutang', nama: n, pin: pin }) 
@@ -190,13 +190,13 @@ $('go').onclick=()=>{
     err.textContent='Terjadi kesalahan jaringan.';
   });
 };
- 
+
 $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click()});
 $('out-btn').onclick=()=>{$('out').hidden=true;$('login').hidden=false;$('pin').value='';$('rows').innerHTML='';$('saldo').textContent=''};
- 
+
 /* ===== ADMIN ===== */
 const num=n=>(n<0?'-':'')+Math.abs(Number(n)||0).toLocaleString('id-ID');
- 
+
 function tab(t){
   $('t-rekap').classList.toggle('on',t==='rekap');
   $('t-pin').classList.toggle('on',t==='pin');
@@ -205,10 +205,10 @@ function tab(t){
 }
 $('t-rekap').onclick=()=>tab('rekap');
 $('t-pin').onclick=()=>tab('pin');
- 
+
 $('adm-btn').onclick=()=>{$('err').textContent='';$('login').hidden=true;$('adm-login').hidden=false;$('apass').focus()};
 $('adm-back').onclick=()=>{$('adm-login').hidden=true;$('login').hidden=false;$('apass').value='';$('aerr').textContent=''};
- 
+
 function showAdm(o){
   const L=o.rows||[];
   $('a-total').textContent=(o.totalSisa<0?'-':'')+rp(o.totalSisa||0);
@@ -224,7 +224,7 @@ function showAdm(o){
   $('adm-login').hidden=true;
   $('adm').hidden=false;
 }
- 
+
 $('adm-go').onclick=()=>{
   const p=$('apass').value,err=$('aerr');err.textContent='';
   if(!p){err.textContent='Isi password admin.';return}
@@ -241,7 +241,7 @@ $('adm-go').onclick=()=>{
     });
 };
 $('apass').addEventListener('keydown',e=>{if(e.key==='Enter')$('adm-go').click()});
- 
+
 $('adm-out').onclick=()=>{
   $('adm').hidden=true;$('login').hidden=false;
   $('a-rekap').innerHTML='';$('a-pin').innerHTML='';$('a-total').textContent='';$('apass').value='';
