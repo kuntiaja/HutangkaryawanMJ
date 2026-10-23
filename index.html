@@ -2,94 +2,215 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f2a4a">
 <title>Cek Kas Bon Karyawan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--paper:#f6f1e7;--card:#fffdf8;--ink:#1f2a37;--mute:#6b7280;--line:#e2d9c6;--red:#b3261e;--blue:#1d4ed8;--green:#1b6e4a;--brand:#23405c}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:13px/1.25 "Segoe UI",Roboto,sans-serif;padding:5vh 7px 10px;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
-.wrap{max-width:600px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
-#out{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
-header{text-align:center;margin-bottom:4px}
-header h1{font:800 22px/1.1 Georgia,serif;margin:0 0 2px;color:var(--brand);letter-spacing:.04em}
-header p{font:600 12px/1.1 "Segoe UI",Roboto,sans-serif;margin:0;color:var(--mute);text-transform:uppercase;letter-spacing:.1em}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 14px;box-shadow:0 2px 4px rgba(0,0,0,.02)}
-label{display:block;font-size:12px;color:var(--mute);margin:0 0 3px}
-select,input{display:block;width:100%;min-width:0;max-width:100%;height:36px;font:inherit;padding:0 10px;border:1px solid #c9bfa8;border-radius:6px;background:#fff;color:var(--ink);margin:0 0 10px;-webkit-appearance:none;appearance:none}
-select{padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236b7280' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
-input{letter-spacing:.2em;font-size:16px;text-align:center}
-button{font:inherit;font-weight:600;width:100%;padding:11px;border:0;border-radius:6px;background:var(--brand);color:#fff;cursor:pointer}
-button.ghost{background:none;color:var(--brand);border:1px solid var(--brand);padding:9px;margin-top:4px}
-button:disabled{opacity:.6}
-#err{color:var(--red);font-size:12px;text-align:center;min-height:14px;margin:4px 0 0}
-.who{font-size:12px;color:var(--mute);text-align:center}
-.name{font:700 16px Georgia,serif;text-align:center;margin:2px 0 6px}
-.big{font:700 24px/1.1 Georgia,serif;text-align:center;margin:2px 0}
-.big.red{color:var(--red)}.big.green{color:var(--green)}
-.sum{display:flex;gap:8px;margin-top:8px}
-.sum div{flex:1;background:var(--paper);border-radius:6px;padding:6px;font-size:11px;color:var(--mute);text-align:center}
-.sum b{display:block;color:var(--ink);font-size:12px}
-.tw{flex:1;min-height:0;overflow-y:auto;width:100%}
-table{border-collapse:collapse;width:100%;font-size:12px;table-layout:fixed}
-th, td{overflow:hidden;text-overflow:ellipsis;word-break:break-word}
-th{text-align:left;font-size:11px;color:var(--mute);font-weight:600;position:sticky;top:0;background:var(--card);border-bottom:2px solid var(--line);padding:3px}
-td{padding:6px 3px;border-bottom:1px dashed var(--line)}
-th:nth-child(1), td:nth-child(1){width:22%}
-th:nth-child(2), td:nth-child(2){width:38%}
-th:nth-child(3), td:nth-child(3){width:20%;text-align:right}
-th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
-.r{text-align:right;white-space:nowrap}
+:root{
+  --bg:#f1f4f9;
+  --card:#ffffff;
+  --ink:#0f172a;
+  --ink-2:#334155;
+  --mute:#64748b;
+  --line:#e5e9f0;
+  --soft:#f6f8fb;
+  --brand:#0f2a4a;
+  --brand-2:#1e4d8c;
+  --accent:#2563eb;
+  --red:#dc2626;
+  --red-bg:#fef2f2;
+  --green:#059669;
+  --green-bg:#ecfdf5;
+  --blue:#2563eb;
+  --blue-bg:#eff6ff;
+  --radius:16px;
+  --shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{
+  margin:0;min-height:100vh;min-height:100dvh;color:var(--ink);
+  font:14px/1.45 "Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(900px 380px at 50% -120px,rgba(30,77,140,.18),transparent 70%),
+    var(--bg);
+  padding:0 14px calc(24px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+
+/* Header */
+header{display:flex;flex-direction:column;align-items:center;text-align:center;padding:36px 0 8px}
+.logo{
+  width:52px;height:52px;border-radius:15px;display:grid;place-items:center;margin-bottom:14px;
+  background:linear-gradient(145deg,var(--brand-2),var(--brand));
+  box-shadow:0 10px 24px rgba(15,42,74,.28),inset 0 1px 0 rgba(255,255,255,.18);
+}
+.logo svg{width:26px;height:26px}
+header h1{margin:0;font-size:22px;font-weight:800;letter-spacing:.06em;color:var(--brand)}
+header p{margin:4px 0 0;font-size:12px;font-weight:600;color:var(--mute);letter-spacing:.12em;text-transform:uppercase}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 4px;font-size:17px;font-weight:700;letter-spacing:-.01em}
+.card .sub{margin:0 0 18px;color:var(--mute);font-size:13px}
+
+/* Forms */
+label{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin:0 0 6px}
+select,input{
+  display:block;width:100%;min-width:0;height:46px;font:inherit;font-size:15px;color:var(--ink);
+  padding:0 14px;border:1px solid #d5dbe5;border-radius:12px;background:#fff;margin:0 0 16px;
+  -webkit-appearance:none;appearance:none;transition:border-color .15s,box-shadow .15s;
+}
+select:focus,input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(37,99,235,.14)}
+select{
+  padding-right:40px;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1.5l6 6 6-6' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 15px center;
+}
+input#pin{letter-spacing:.5em;text-align:center;font-weight:600;font-size:18px}
+input#pin::placeholder{letter-spacing:.4em;color:#b6bfcd}
+
+button{
+  font:inherit;font-weight:600;font-size:15px;width:100%;height:48px;border:0;border-radius:12px;cursor:pointer;
+  background:linear-gradient(180deg,var(--brand-2),var(--brand));color:#fff;
+  box-shadow:0 6px 16px rgba(15,42,74,.25);transition:transform .1s,box-shadow .15s,opacity .15s;
+}
+button:hover{box-shadow:0 8px 20px rgba(15,42,74,.32)}
+button:active{transform:translateY(1px)}
+button:disabled{opacity:.6;cursor:not-allowed;box-shadow:none}
+button.ghost{
+  background:transparent;color:var(--brand);border:1px solid #cfd7e3;box-shadow:none;
+  height:44px;font-size:14px;margin-top:10px;
+}
+button.ghost:hover{background:var(--soft);box-shadow:none}
+#err,#aerr{color:var(--red);font-size:13px;font-weight:500;text-align:center;min-height:18px;margin:10px 0 0}
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0 2px;color:#a3adbd;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* Employee result */
+.hero{
+  position:relative;overflow:hidden;border:0;color:#fff;padding:22px 20px 18px;
+  background:linear-gradient(145deg,#1e4d8c 0%,#0f2a4a 70%);
+  box-shadow:0 14px 34px rgba(15,42,74,.3);
+}
+.hero::after{
+  content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.14),transparent 70%);pointer-events:none;
+}
+.hero .who{color:rgba(255,255,255,.7)}
+.hero .name{color:#fff}
+.who{font-size:12px;color:var(--mute);font-weight:500}
+.name{font-size:18px;font-weight:700;letter-spacing:-.01em;margin:2px 0 16px}
+#jab{display:inline-block;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.14);font-size:11px;font-weight:600;letter-spacing:.04em;margin-bottom:8px}
+.big{font-size:32px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin:4px 0 6px;font-variant-numeric:tabular-nums}
+.big.red{color:#fecaca}
+.big.green{color:#a7f3d0}
+.asof{font-size:12px;color:rgba(255,255,255,.65)}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.sum div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;font-size:11px;font-weight:500;color:rgba(255,255,255,.7)}
+.sum b{display:block;margin-top:2px;color:#fff;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.card-head h3{margin:0;font-size:15px;font-weight:700}
+
+/* Tables */
+.tw{max-height:46vh;overflow-y:auto;margin:0 -8px;padding:0 8px;scrollbar-width:thin}
+table{border-collapse:collapse;width:100%;font-size:13px;table-layout:fixed}
+th{
+  position:sticky;top:0;background:var(--card);z-index:1;text-align:left;
+  font-size:11px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;
+  padding:8px 4px;border-bottom:1px solid var(--line);
+}
+td{padding:11px 4px;border-bottom:1px solid #eef1f6;overflow:hidden;text-overflow:ellipsis;word-break:break-word;vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--soft)}
+th:nth-child(1),td:nth-child(1){width:24%}
+th:nth-child(2),td:nth-child(2){width:34%}
+th:nth-child(3),td:nth-child(3),th:nth-child(4),td:nth-child(4){width:21%;text-align:right}
+th.r,td.r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .neg{color:var(--red);font-weight:600}
 .pos{color:var(--blue);font-weight:600}
-.note{font-size:11px;color:var(--mute);text-align:center;margin:4px 0 0}
 .ok{color:var(--green);font-weight:600}
-#adm{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
-.tabs{display:flex;gap:8px}
-.tabs button{flex:1;padding:8px;font-size:13px;background:none;color:var(--brand);border:1px solid var(--brand)}
-.tabs button.on{background:var(--brand);color:#fff}
+
+/* Admin */
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat .who{text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:600}
+.stat .big{margin:0;font-size:28px}
+.stat .big.red{color:var(--red)}
+.tabs{display:flex;gap:4px;padding:4px;background:#e6ebf3;border-radius:12px}
+.tabs button{
+  flex:1;height:38px;font-size:13px;font-weight:600;background:transparent;color:var(--mute);
+  box-shadow:none;border-radius:9px;
+}
+.tabs button:hover{box-shadow:none;color:var(--ink)}
+.tabs button.on{background:#fff;color:var(--brand);box-shadow:0 1px 3px rgba(15,23,42,.12)}
 .tr th:nth-child(1),.tr td:nth-child(1){width:31%;text-align:left}
-.tr th:nth-child(n+2),.tr td:nth-child(n+2){width:23%;text-align:right}
+.tr th:nth-child(n+2),.tr td:nth-child(n+2){width:23%;text-align:right;font-variant-numeric:tabular-nums}
 .tp th:nth-child(1),.tp td:nth-child(1){width:42%;text-align:left}
-.tp th:nth-child(2),.tp td:nth-child(2){width:32%;text-align:left}
-.tp th:nth-child(3),.tp td:nth-child(3){width:26%;text-align:right;font-weight:700;letter-spacing:.08em}
+.tp th:nth-child(2),.tp td:nth-child(2){width:30%;text-align:left}
+.tp th:nth-child(3),.tp td:nth-child(3){width:28%;text-align:right;font-weight:700;letter-spacing:.12em;font-variant-numeric:tabular-nums}
+.tr td:nth-child(1){font-weight:500}
+
+.note{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--mute);text-align:center;margin:6px 0 0}
+.note svg{width:13px;height:13px;flex:none}
 [hidden]{display:none!important}
+@media (max-width:380px){
+  .card{padding:16px}
+  .big{font-size:28px}
+  table{font-size:12px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
+  <div class="logo" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>
+  </div>
   <h1>MERDEKA JAYA</h1>
   <p>Cek Kas Bon Karyawan</p>
 </header>
 
+<!-- LOGIN KARYAWAN -->
 <section id="login" class="card">
+<h2>Selamat datang</h2>
+<p class="sub">Pilih nama Anda dan masukkan PIN untuk melihat saldo kas bon.</p>
 <label for="nama">Nama Anda</label>
 <select id="nama"><option value="">Sedang menghubungkan ke server...</option></select>
 <label for="pin">PIN (6 angka dari admin)</label>
 <input id="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••">
 <button id="go">Lihat Hutang Saya</button>
 <p id="err" role="alert"></p>
+<div class="divider">atau</div>
 <button class="ghost" id="adm-btn" type="button">Masuk Admin</button>
 </section>
 
+<!-- LOGIN ADMIN -->
 <section id="adm-login" class="card" hidden>
+<h2>Akses Admin</h2>
+<p class="sub">Masukkan password admin untuk melihat rekap seluruh karyawan.</p>
 <label for="apass">Password Admin</label>
-<input id="apass" type="password" autocomplete="off" placeholder="Password admin" style="letter-spacing:normal;font-size:16px">
+<input id="apass" type="password" autocomplete="off" placeholder="Password admin" style="letter-spacing:normal;font-size:15px;text-align:left;font-weight:500">
 <button id="adm-go" type="button">Masuk</button>
-<p id="aerr" role="alert" style="color:var(--red);font-size:12px;text-align:center;min-height:14px;margin:4px 0 0"></p>
+<p id="aerr" role="alert"></p>
 <button class="ghost" id="adm-back" type="button">Kembali</button>
 </section>
 
-<section id="adm" hidden>
-<div class="card" style="padding:10px 12px">
+<!-- PANEL ADMIN -->
+<section id="adm" hidden style="display:flex;flex-direction:column;gap:14px">
+<div class="card stat">
 <div class="who">Total sisa kas bon semua karyawan</div>
-<div class="big red" id="a-total" style="font-size:22px"></div>
+<div class="big red" id="a-total"></div>
 </div>
 <div class="tabs">
 <button id="t-rekap" class="on" type="button">Rekap</button>
 <button id="t-pin" type="button">Nama &amp; PIN</button>
 </div>
-<div class="card" style="padding:8px 12px;flex:1;min-height:0;display:flex;flex-direction:column">
+<div class="card" style="padding:10px 16px">
 <div class="tw" id="v-rekap">
 <table class="tr">
 <thead><tr><th>Nama</th><th>Kas Bon</th><th>Bayar</th><th>Sisa</th></tr></thead>
@@ -103,21 +224,22 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
 </table>
 </div>
 </div>
-<button class="ghost" id="adm-out" type="button">Keluar Admin</button>
+<button class="ghost" id="adm-out" type="button" style="margin-top:0">Keluar Admin</button>
 </section>
 
-<section id="out" hidden>
-<div class="card">
-<div class="who" id="jab"></div>
+<!-- HASIL KARYAWAN -->
+<section id="out" hidden style="display:flex;flex-direction:column;gap:14px">
+<div class="card hero">
+<span id="jab"></span>
 <div class="name" id="nm"></div>
 <div class="who" id="lbl">Sisa hutang Anda</div>
 <div class="big" id="saldo"></div>
-<div class="who" style="font-size:11px">Per tanggal <span id="asof"></span></div>
+<div class="asof">Per tanggal <span id="asof"></span></div>
 <div class="sum"><div>Total Kas Bon<b id="tb"></b></div><div>Total Dibayar<b id="tp"></b></div></div>
 </div>
 
-<div class="card" style="padding:8px 12px;flex:1;min-height:0;display:flex;flex-direction:column">
-<div class="who" style="margin-bottom:3px;text-align:left;font-weight:600">Riwayat Transaksi</div>
+<div class="card" style="padding:16px">
+<div class="card-head"><h3>Riwayat Transaksi</h3></div>
 <div class="tw">
   <table>
     <thead><tr><th>Tanggal</th><th>Ket</th><th class="r">Kas Bon</th><th class="r">Bayar</th></tr></thead>
@@ -126,10 +248,13 @@ th:nth-child(4), td:nth-child(4){width:20%;text-align:right}
 </div>
 </div>
 
-<button class="ghost" id="out-btn">Keluar / Ganti Akun</button>
+<button class="ghost" id="out-btn" style="margin-top:0">Keluar / Ganti Akun</button>
 </section>
 
-<p class="note">Data bersifat pribadi, jangan bagikan PIN Anda.</p>
+<p class="note">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+  Data bersifat pribadi, jangan bagikan PIN Anda.
+</p>
 </div>
 
 <script>
@@ -163,7 +288,7 @@ function show(o){
   $('saldo').className='big '+(s>0?'red':'green');$('tb').textContent=rp(R.reduce((a,r)=>a+(Number(r[2])||0),0));
   $('tp').textContent=rp(R.reduce((a,r)=>a+(Number(r[3])||0),0));$('rows').innerHTML = R.length ? R.slice().reverse().map(r=>
     `<tr><td>${tgl(r[0])}</td><td>${esc(r[1])}</td><td class="r neg">${r[2] ? rp(Number(r[2])) : ''}</td><td class="r pos">${r[3] ? rp(Number(r[3])) : ''}</td></tr>`
-  ).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--mute)">Belum ada catatan.</td></tr>';
+  ).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--mute);padding:20px 0">Belum ada catatan.</td></tr>';
 
   $('login').hidden=true;
   $('out').hidden=false;
@@ -216,11 +341,11 @@ function showAdm(o){
   $('a-rekap').innerHTML=L.length
     ? L.slice().sort((a,b)=>b.sisa-a.sisa).map(r=>
         `<tr><td>${esc(r.nama)}</td><td class="r">${num(r.bon)}</td><td class="r">${num(r.bayar)}</td><td class="r ${r.sisa>0?'neg':'ok'}">${num(r.sisa)}</td></tr>`).join('')
-    : '<tr><td colspan="4" style="text-align:center;color:var(--mute)">Belum ada karyawan.</td></tr>';
+    : '<tr><td colspan="4" style="text-align:center;color:var(--mute);padding:20px 0">Belum ada karyawan.</td></tr>';
   $('a-pin').innerHTML=L.length
     ? L.map(r=>
         `<tr><td>${esc(r.nama)}</td><td>${esc(r.jabatan)}</td><td>${r.pin?esc(r.pin):'-'}</td></tr>`).join('')
-    : '<tr><td colspan="3" style="text-align:center;color:var(--mute)">Belum ada karyawan.</td></tr>';
+    : '<tr><td colspan="3" style="text-align:center;color:var(--mute);padding:20px 0">Belum ada karyawan.</td></tr>';
   tab('rekap');
   $('adm-login').hidden=true;
   $('adm').hidden=false;
