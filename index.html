@@ -339,6 +339,24 @@ table.lg{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric
 .vgrid .vopt{flex:none;width:74px;padding:8px 2px 7px}
 .vgrid .vopt svg{width:38px;height:28px}
 
+/* Foto karyawan */
+.av.ph{background-size:cover;background-position:center;background-repeat:no-repeat;color:transparent;font-size:0}
+.top .av{width:54px;height:54px;border-radius:18px}
+.top .av.ph{cursor:zoom-in;box-shadow:0 10px 18px -6px rgba(16,26,61,.35),0 0 0 3px #fff}
+.item.fr .av{cursor:pointer}
+.facts{display:flex;gap:6px;flex:none}
+.mini-btn{width:auto;height:34px;padding:0 12px;font-size:12.5px;font-weight:700;border-radius:11px;box-shadow:none;background:var(--primary-soft);color:var(--primary)}
+.mini-btn.danger{background:var(--red-bg);color:var(--red)}
+.toast{
+  position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;
+  max-width:88vw;padding:12px 18px;border-radius:14px;background:var(--navy);color:#fff;font-size:13.5px;font-weight:700;
+  box-shadow:0 16px 36px -10px rgba(16,26,61,.5);animation:rise .25s both;text-align:center;
+}
+.lb{position:fixed;inset:0;z-index:70;background:rgba(10,16,40,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:24px;cursor:zoom-out;animation:rise .2s both}
+.lb-in{text-align:center;color:#fff}
+.lb img{display:block;margin:0 auto;width:min(78vw,340px);aspect-ratio:1;object-fit:cover;border-radius:28px;border:4px solid #fff;box-shadow:0 30px 60px -10px rgba(0,0,0,.5)}
+.lb-n{margin-top:14px;font-size:17px;font-weight:800}
+
 /* Navigasi bawah */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;padding:0 16px calc(12px + env(safe-area-inset-bottom));pointer-events:none}
 .nav .in{
@@ -478,10 +496,12 @@ table.lg{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric
 <div class="tabs">
 <button id="t-rekap" class="on" type="button">Rekap</button>
 <button id="t-pin" type="button">Nama &amp; PIN</button>
+<button id="t-foto" type="button">Foto</button>
 </div>
 <div class="card" style="padding:8px 16px">
 <div class="list" id="v-rekap"><div id="a-rekap"></div></div>
 <div class="list" id="v-pin" hidden><div id="a-pin"></div></div>
+<div class="list" id="v-foto" hidden><div id="a-foto"></div></div>
 </div>
 <button class="ghost" id="adm-out" type="button">Keluar Admin</button>
 </section>
@@ -557,6 +577,12 @@ table.lg{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
   Data bersifat pribadi, jangan bagikan PIN Anda.
 </p>
+</div>
+
+<input type="file" id="finp" accept="image/*" hidden>
+<div class="toast" id="toast" role="status" hidden></div>
+<div class="lb" id="lb" hidden>
+  <div class="lb-in"><img id="lbimg" alt="Foto karyawan"><div class="lb-n" id="lbname"></div></div>
 </div>
 
 <!-- NAV BAWAH (karyawan) -->
@@ -865,7 +891,11 @@ function show(o,silent){
 
   $('jab').textContent=o.jabatan;
   $('nm').textContent=o.nama;
-  $('av').textContent=String(o.nama||'?').trim().charAt(0).toUpperCase();
+  const fotoOk=safeImg(o.foto);CUR_FOTO=fotoOk;
+  const avEl=$('av');
+  avEl.classList.toggle('ph',!!fotoOk);
+  avEl.style.backgroundImage=fotoOk?"url('"+fotoOk+"')":'';
+  avEl.textContent=fotoOk?'':String(o.nama||'?').trim().charAt(0).toUpperCase();
   $('asof').textContent=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric',timeZone:'Asia/Jakarta'});
 
   const lunas=(s===0);
@@ -952,20 +982,23 @@ function tab(t){
   $('t-pin').classList.toggle('on',t==='pin');
   $('v-rekap').hidden=t!=='rekap';
   $('v-pin').hidden=t!=='pin';
+  $('t-foto').classList.toggle('on',t==='foto');
+  $('v-foto').hidden=t!=='foto';
 }
 $('t-rekap').onclick=()=>tab('rekap');
 $('t-pin').onclick=()=>tab('pin');
+$('t-foto').onclick=()=>tab('foto');
 
 $('adm-btn').onclick=()=>{$('err').textContent='';$('login').hidden=true;$('adm-login').hidden=false;$('apass').focus()};
 $('adm-back').onclick=()=>{$('adm-login').hidden=true;$('login').hidden=false;$('apass').value='';$('aerr').textContent=''};
 
-function showAdm(o){
+function showAdm(o,keep){
   const L=o.rows||[];
   $('a-total').textContent=(o.totalSisa<0?'-':'')+rp(o.totalSisa||0);
   $('a-rekap').innerHTML=L.length
     ? L.slice().sort((a,b)=>b.sisa-a.sisa).map((r,i)=>
         `<div class="item">
-          <div class="${avc(r,i)}">${esc(String(r.nama||'?').trim().charAt(0).toUpperCase())}</div>
+          ${avH(r,i)}
           <div class="l"><div class="t">${esc(r.nama)}</div><div class="s">Bon ${num(r.bon)} · Bayar ${num(r.bayar)}</div></div>
           <div class="rt ${r.sisa>0?'neg':'ok'}">${r.sisa===0?'Lunas':num(r.sisa)}</div>
         </div>`).join('')
@@ -973,16 +1006,18 @@ function showAdm(o){
   $('a-pin').innerHTML=L.length
     ? L.map((r,i)=>
         `<div class="item">
-          <div class="${avc(r,i)}">${esc(String(r.nama||'?').trim().charAt(0).toUpperCase())}</div>
+          ${avH(r,i)}
           <div class="l"><div class="t">${esc(r.nama)}</div><div class="s">${esc(r.jabatan)}</div></div>
           <div class="pinbox">${r.pin?esc(r.pin):'-'}</div>
         </div>`).join('')
     : '<div class="empty">Belum ada karyawan.</div>';
-  tab('rekap');
+  ADM_ROWS=L;ADM_TOTAL=o.totalSisa||0;
+  renderFotoTab();
+  if(!keep)tab('rekap');
   $('adm-login').hidden=true;
   $('boot').hidden=true;
   $('adm').hidden=false;
-  window.scrollTo(0,0);
+  if(!keep)window.scrollTo(0,0);
 }
 
 $('adm-go').onclick=()=>{
@@ -993,7 +1028,7 @@ $('adm-go').onclick=()=>{
     .then(res=>res.json())
     .then(o=>{
       $('adm-go').disabled=false;$('adm-go').textContent='Masuk';
-      if(o.ok){try{sessionStorage.setItem(ADM_KEY,p)}catch(e){}$('apass').value='';showAdm(o)}else{err.textContent=o.msg||'Gagal.'}
+      if(o.ok){ADM_PASS=p;try{sessionStorage.setItem(ADM_KEY,p)}catch(e){}$('apass').value='';showAdm(o)}else{err.textContent=o.msg||'Gagal.'}
     })
     .catch(()=>{
       $('adm-go').disabled=false;$('adm-go').textContent='Masuk';
@@ -1001,6 +1036,98 @@ $('adm-go').onclick=()=>{
     });
 };
 $('apass').addEventListener('keydown',e=>{if(e.key==='Enter')$('adm-go').click()});
+
+/* ===== FOTO KARYAWAN (hanya admin yang bisa mengunggah) ===== */
+let ADM_PASS='',ADM_ROWS=[],ADM_TOTAL=0,CUR_FOTO='',FOTO_IDX=-1,toastT;
+
+function toast(m){
+  const t=$('toast');t.textContent=m;t.hidden=false;
+  clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true},2800);
+}
+function safeImg(u){return /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(u||'')?u:''}
+function avH(r,i,attr){
+  const f=safeImg(r.foto);
+  return f
+    ? `<div class="av sm ph" ${attr||''} style="background-image:url('${f}')"></div>`
+    : `<div class="${avc(r,i)}" ${attr||''}>${esc(String(r.nama||'?').trim().charAt(0).toUpperCase())}</div>`;
+}
+
+/* Lightbox foto (sisi karyawan) */
+$('av').onclick=()=>{
+  if(!CUR_FOTO)return;
+  $('lbimg').src=CUR_FOTO;$('lbname').textContent=$('nm').textContent;$('lb').hidden=false;
+};
+$('lb').onclick=()=>{$('lb').hidden=true};
+
+/* Tab Foto (admin) */
+function renderFotoTab(){
+  $('a-foto').innerHTML=ADM_ROWS.length?ADM_ROWS.map((r,i)=>{
+    const ada=!!safeImg(r.foto);
+    return `<div class="item fr">
+      ${avH(r,i,'data-up="'+i+'"')}
+      <div class="l"><div class="t">${esc(r.nama)}</div><div class="s">${esc(r.jabatan)} · ${ada?'Ada foto':'Belum ada foto'}</div></div>
+      <div class="facts"><button type="button" class="mini-btn" data-up="${i}">${ada?'Ganti':'Unggah'}</button>${ada?`<button type="button" class="mini-btn danger" data-del="${i}">Hapus</button>`:''}</div>
+    </div>`;
+  }).join(''):'<div class="empty">Belum ada karyawan.</div>';
+}
+$('a-foto').addEventListener('click',e=>{
+  const u=e.target.closest('[data-up]'),d=e.target.closest('[data-del]');
+  if(u){FOTO_IDX=Number(u.dataset.up);$('finp').value='';$('finp').click()}
+  else if(d){hapusFoto(Number(d.dataset.del))}
+});
+
+/* Perkecil & potong persegi di perangkat sebelum diunggah */
+function kompres(file){
+  return new Promise((ok,gagal)=>{
+    const url=URL.createObjectURL(file),img=new Image();
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
+      const sisi=Math.min(img.naturalWidth,img.naturalHeight);
+      if(!sisi){gagal(new Error('Gambar tidak valid'));return}
+      const sx=(img.naturalWidth-sisi)/2,sy=(img.naturalHeight-sisi)/2;
+      let ukuran=280,q=.8,out='';
+      for(let n=0;n<10;n++){
+        const c=document.createElement('canvas');c.width=c.height=ukuran;
+        const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,ukuran,ukuran);
+        g.drawImage(img,sx,sy,sisi,sisi,0,0,ukuran,ukuran);
+        out=c.toDataURL('image/jpeg',q);
+        if(out.length<=40000)break;
+        q-=.1;
+        if(q<.45){q=.7;ukuran=Math.round(ukuran*.85)}
+      }
+      out.length<=45000?ok(out):gagal(new Error('Foto terlalu besar, coba foto lain.'));
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);gagal(new Error('File bukan gambar yang valid.'))};
+    img.src=url;
+  });
+}
+
+$('finp').onchange=()=>{
+  const f=$('finp').files[0],r=ADM_ROWS[FOTO_IDX];
+  if(!f||!r)return;
+  toast('Memproses foto…');
+  kompres(f).then(data=>{
+    toast('Menyimpan foto '+r.nama+'…');
+    return fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'simpanFoto',pass:ADM_PASS,nama:r.nama,foto:data})})
+      .then(x=>x.json())
+      .then(o=>{
+        if(o.ok){r.foto=data;showAdm({rows:ADM_ROWS,totalSisa:ADM_TOTAL},true);toast('Foto '+r.nama+' tersimpan ✓')}
+        else toast(o.msg||'Gagal menyimpan foto.');
+      });
+  }).catch(e=>toast(e&&e.message?e.message:'Gagal memproses foto.'));
+};
+
+function hapusFoto(i){
+  const r=ADM_ROWS[i];if(!r)return;
+  if(!confirm('Hapus foto '+r.nama+'?'))return;
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'hapusFoto',pass:ADM_PASS,nama:r.nama})})
+    .then(x=>x.json())
+    .then(o=>{
+      if(o.ok){r.foto='';showAdm({rows:ADM_ROWS,totalSisa:ADM_TOTAL},true);toast('Foto dihapus')}
+      else toast(o.msg||'Gagal menghapus foto.');
+    })
+    .catch(()=>toast('Terjadi kesalahan jaringan.'));
+}
 
 /* ===== SESI: tetap masuk saat refresh / geser ke bawah ===== */
 const SESS_KEY='kasbon_sess_v1', ADM_KEY='kasbon_adm_v1';
@@ -1021,7 +1148,7 @@ function clearSess(){
       .then(r=>r.json())
       .then(o=>{
         if(o.ok){
-          if(JSON.stringify(o.rows)!==JSON.stringify(s.data.rows)||o.jabatan!==s.data.jabatan){
+          if(JSON.stringify(o.rows)!==JSON.stringify(s.data.rows)||o.jabatan!==s.data.jabatan||o.foto!==s.data.foto){
             saveSess(s.nama,s.pin,o);show(o,true);
           }
         }else{
@@ -1035,15 +1162,16 @@ function clearSess(){
     const balik=()=>{$('boot').hidden=true;$('login').hidden=false};
     fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'adminData',pass:ap})})
       .then(r=>r.json())
-      .then(o=>{if(o.ok){showAdm(o)}else{try{sessionStorage.removeItem(ADM_KEY)}catch(e){}balik()}})
+      .then(o=>{if(o.ok){ADM_PASS=ap;showAdm(o)}else{try{sessionStorage.removeItem(ADM_KEY)}catch(e){}balik()}})
       .catch(balik);
   }
 })();
 
 $('adm-out').onclick=()=>{
   clearSess();
+  ADM_PASS='';ADM_ROWS=[];
   $('adm').hidden=true;$('login').hidden=false;
-  $('a-rekap').innerHTML='';$('a-pin').innerHTML='';$('a-total').textContent='';$('apass').value='';
+  $('a-rekap').innerHTML='';$('a-pin').innerHTML='';$('a-foto').innerHTML='';$('a-total').textContent='';$('apass').value='';
 };
 </script>
 </body>
