@@ -391,8 +391,6 @@ body.has-nav .ibar{bottom:calc(96px + env(safe-area-inset-bottom))}
 .ibar-b{flex:1 1 100%;display:flex;align-items:center;gap:8px}
 #ibar-go{flex:1.5;width:auto;height:44px;padding:0 16px;border-radius:13px;font-size:15px;box-shadow:0 10px 16px -8px rgba(61,90,254,.7)}
 #ibar-x{flex:1;width:auto;height:44px;padding:0 16px;border-radius:13px;background:var(--soft);color:var(--ink-2);box-shadow:none;font-size:15px}
-body.ib-on{padding-bottom:calc(210px + env(safe-area-inset-bottom))}
-body.has-nav.ib-on{padding-bottom:calc(300px + env(safe-area-inset-bottom))}
 .linkbtn{width:auto;height:auto;padding:7px 14px;background:var(--primary-soft);color:var(--primary);font-size:12.5px;font-weight:700;border-radius:999px;box-shadow:none}
 
 /* Navigasi bawah */
@@ -453,6 +451,58 @@ body.has-nav.ib-on{padding-bottom:calc(300px + env(safe-area-inset-bottom))}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+/* ===== Editor foto ===== */
+.crop{position:fixed;inset:0;z-index:75;background:rgba(10,16,40,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px;overflow:auto;animation:rise .2s both}
+.crop-in{width:100%;max-width:360px;max-height:100%;overflow:auto;background:#fff;border-radius:26px;padding:18px;text-align:center;box-shadow:0 30px 70px -14px rgba(0,0,0,.55)}
+.crop-in h3{margin:0 0 4px;font-size:18px;font-weight:800;color:var(--ink)}
+.crop-in p{margin:0 0 12px;font-size:12.5px;color:var(--mute);line-height:1.4}
+.cv-wrap{
+  position:relative;width:clamp(170px,calc(100dvh - 360px),300px);max-width:100%;aspect-ratio:1;margin:0 auto;border-radius:26px;overflow:hidden;
+  background:#eef0f7;touch-action:none;cursor:grab;box-shadow:0 0 0 3px var(--primary-soft);user-select:none;-webkit-user-select:none;
+}
+.cv-wrap.drag{cursor:grabbing}
+.cv-wrap canvas{display:block;width:100%;height:100%}
+.cv-wrap::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.55)),linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.55)),linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.55)),linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.55));
+  background-size:1px 100%,1px 100%,100% 1px,100% 1px;
+  background-position:33.33% 0,66.66% 0,0 33.33%,0 66.66%;background-repeat:no-repeat;
+}
+.zrow{display:flex;align-items:center;gap:10px;margin:14px 2px 8px}
+.zb{flex:none;width:36px;height:36px;padding:0;border-radius:50%;background:var(--soft);color:var(--primary);border:1px solid var(--line);box-shadow:none;font-size:20px;line-height:1}
+.zrow input[type=range]{-webkit-appearance:none;appearance:none;flex:1;min-width:0;width:auto;height:28px;margin:0;padding:0;border:0;background:transparent;box-shadow:none}
+.zrow input[type=range]:focus{box-shadow:none}
+.zrow input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:#dfe4f5}
+.zrow input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--primary);border:3px solid #fff;margin-top:-9px;box-shadow:0 4px 10px rgba(61,90,254,.5)}
+.zrow input[type=range]::-moz-range-track{height:6px;border-radius:99px;background:#dfe4f5}
+.zrow input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--primary);border:3px solid #fff;box-shadow:0 4px 10px rgba(61,90,254,.5)}
+.cr-tools{display:flex;gap:8px;justify-content:center}
+.rb{flex:1;width:auto;height:40px;padding:0 12px;border-radius:12px;font-size:13.5px;background:var(--soft);color:var(--ink-2);border:1px solid var(--line);box-shadow:none}
+.crop-act{display:flex;gap:10px;margin-top:14px}
+.crop-act button{flex:1;width:auto;height:48px;font-size:15px;border-radius:14px}
+
+/* ===== Menu login ringkas (muat 1 layar di HP, tidak raksasa di laptop) ===== */
+header{padding-top:calc(14px + env(safe-area-inset-top))}
+.logo{width:40px;height:40px;border-radius:13px}
+.logo svg{width:20px;height:20px}
+header h1{font-size:16px}
+header p{font-size:10.5px}
+.wrap{gap:12px}
+#login,#adm-login{padding:16px}
+#login .illus{margin:0 0 10px;height:clamp(84px,15vh,118px)}
+#login .illus svg{height:100%;width:100%}
+#login h2,#adm-login h2{font-size:19px}
+#login .sub,#adm-login .sub{margin:0 0 12px;font-size:13px;line-height:1.4}
+#login label,#adm-login label{font-size:12.5px;margin-bottom:4px}
+#login select,#login input,#adm-login input{height:46px;margin-bottom:12px;border-radius:13px}
+#login input#pin{font-size:18px}
+#login #go,#adm-login #adm-go{height:48px;font-size:15px;border-radius:14px}
+#login .ghost,#adm-login .ghost{height:44px;font-size:14px;border-radius:14px}
+#login .divider{margin:10px 0}
+#err,#aerr{min-height:16px;margin:8px 0 0;font-size:12.5px}
+.note{font-size:11.5px;gap:8px}
+@media (max-height:720px){#login .illus{display:none}}
+@media (min-width:700px){.wrap{max-width:440px}}
 </style>
 </head>
 <body>
@@ -554,9 +604,6 @@ body.has-nav.ib-on{padding-bottom:calc(300px + env(safe-area-inset-bottom))}
   </div>
   <div class="hi"><span>Halo 👋</span><b id="nm"></b></div>
   <span id="jab"></span>
-  <button id="suara" class="icon-btn" type="button" hidden aria-label="Putar ulang suara">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
-  </button>
 </div>
 
 <div class="card hero" id="hero">
@@ -637,6 +684,27 @@ body.has-nav.ib-on{padding-bottom:calc(300px + env(safe-area-inset-bottom))}
     </div>
     <button type="button" id="lb-x" class="lbx">Tutup</button>
     <p class="lb-h">Foto hanya bisa diubah oleh Anda sendiri.</p>
+  </div>
+</div>
+
+<div class="crop" id="crop" hidden role="dialog" aria-label="Atur foto profil">
+  <div class="crop-in">
+    <h3>Atur foto profil</h3>
+    <p>Geser foto untuk memindah. Cubit layar atau pakai slider untuk memperbesar.</p>
+    <div class="cv-wrap" id="cvw"><canvas id="cv"></canvas></div>
+    <div class="zrow">
+      <button type="button" class="zb" id="z-out" aria-label="Perkecil">−</button>
+      <input type="range" id="zrange" min="1" max="4" step="0.01" value="1" aria-label="Ukuran foto">
+      <button type="button" class="zb" id="z-in" aria-label="Perbesar">+</button>
+    </div>
+    <div class="cr-tools">
+      <button type="button" class="rb" id="cr-rot">⟳ Putar</button>
+      <button type="button" class="rb" id="cr-reset">Atur ulang</button>
+    </div>
+    <div class="crop-act">
+      <button type="button" class="ghost" id="cr-no">Batal</button>
+      <button type="button" id="cr-ok">Simpan foto</button>
+    </div>
   </div>
 </div>
 
@@ -721,7 +789,6 @@ function terbilang(n){
   }
   return t(n);
 }
-$('suara').onclick=()=>bicara(teksSuara);
 
 /* Daftar nama: tampil instan dari cache, lalu diperbarui di latar belakang */
 function isiNama(list){
@@ -995,7 +1062,6 @@ function show(o,silent){
   if(lunas)teksSuara='Hutang '+o.nama+' Lunas';
   else if(s>0)teksSuara='Hutang '+o.nama+' '+terbilang(s)+' rupiah';
   else teksSuara='Hutang '+o.nama+' Lunas, kelebihan pembayaran '+terbilang(s)+' rupiah';
-  $('suara').hidden=!TTS;
   if(!silent)bicara(teksSuara);
 }
 
@@ -1129,7 +1195,7 @@ function refreshLb(nama){
 }
 function busyFoto(b){
   UPLOADING=b;
-  ['lb-up','lb-del','cam'].forEach(id=>{$(id).disabled=b});
+  ['lb-up','lb-del','cam','cr-ok','cr-no'].forEach(id=>{$(id).disabled=b});
 }
 function pilihFoto(){if(UPLOADING)return;$('finp').value='';$('finp').click()}
 
@@ -1141,49 +1207,126 @@ $('lb-del').onclick=()=>hapusFoto();
 $('lb-x').onclick=()=>{$('lb').hidden=true};
 $('lb').onclick=e=>{if(e.target===$('lb'))$('lb').hidden=true};
 
-/* Perkecil & potong persegi di HP sebelum diunggah */
-function kompres(file){
-  return new Promise((ok,gagal)=>{
-    const url=URL.createObjectURL(file),img=new Image();
-    img.onload=()=>{
-      URL.revokeObjectURL(url);
-      const sisi=Math.min(img.naturalWidth,img.naturalHeight);
-      if(!sisi){gagal({pesan:'Gambar tidak valid.'});return}
-      const sx=(img.naturalWidth-sisi)/2,sy=(img.naturalHeight-sisi)/2;
-      let ukuran=280,q=.8,out='';
-      for(let n=0;n<10;n++){
-        const c=document.createElement('canvas');c.width=c.height=ukuran;
-        const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,ukuran,ukuran);
-        g.drawImage(img,sx,sy,sisi,sisi,0,0,ukuran,ukuran);
-        out=c.toDataURL('image/jpeg',q);
-        if(out.length<=40000)break;
-        q-=.1;
-        if(q<.45){q=.7;ukuran=Math.round(ukuran*.85)}
-      }
-      out.length<=45000?ok(out):gagal({pesan:'Foto terlalu besar, coba foto lain.'});
-    };
-    img.onerror=()=>{URL.revokeObjectURL(url);gagal({pesan:'File bukan gambar yang valid.'})};
-    img.src=url;
-  });
+/* ===== EDITOR FOTO: geser, perbesar, putar, lalu simpan ===== */
+const CR={img:null,nw:0,nh:0,rot:0,z:1,ox:0,oy:0,V:300,pts:new Map(),pd:0};
+const cvs=$('cv'),cx2=cvs.getContext('2d');
+
+const crDims=()=>CR.rot%180?[CR.nh,CR.nw]:[CR.nw,CR.nh];
+const crMin=()=>{const d=crDims();return CR.V/Math.min(d[0],d[1])};
+function crClamp(){
+  const d=crDims(),sc=crMin()*CR.z;
+  const mx=Math.max(0,(d[0]*sc-CR.V)/2),my=Math.max(0,(d[1]*sc-CR.V)/2);
+  CR.ox=Math.min(mx,Math.max(-mx,CR.ox));CR.oy=Math.min(my,Math.max(-my,CR.oy));
 }
+function crDraw(ctx,size){
+  const k=size/CR.V,sc=crMin()*CR.z*k;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);
+  ctx.save();
+  ctx.translate(size/2+CR.ox*k,size/2+CR.oy*k);
+  ctx.rotate(CR.rot*Math.PI/180);
+  ctx.scale(sc,sc);
+  ctx.drawImage(CR.img,-CR.nw/2,-CR.nh/2);
+  ctx.restore();
+}
+function crRender(){
+  if(!CR.img)return;
+  crClamp();crDraw(cx2,cvs.width);$('zrange').value=CR.z;
+}
+function crSize(){
+  const w=$('cvw').clientWidth||300,old=CR.V;CR.V=w;
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  cvs.width=cvs.height=Math.round(w*dpr);
+  if(old&&old!==w){CR.ox*=w/old;CR.oy*=w/old}
+}
+function setZoom(z){
+  const nz=Math.min(4,Math.max(1,z)),r=nz/CR.z;
+  CR.ox*=r;CR.oy*=r;CR.z=nz;
+}
+function bukaCrop(file){
+  const url=URL.createObjectURL(file),img=new Image();
+  img.onload=()=>{
+    URL.revokeObjectURL(url);
+    if(!img.naturalWidth||!img.naturalHeight){toast('Gambar tidak valid.');return}
+    /* kecilkan dulu agar geser/zoom tetap lancar di HP */
+    const f=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
+    const off=document.createElement('canvas');
+    off.width=Math.max(1,Math.round(img.naturalWidth*f));off.height=Math.max(1,Math.round(img.naturalHeight*f));
+    off.getContext('2d').drawImage(img,0,0,off.width,off.height);
+    CR.img=off;CR.nw=off.width;CR.nh=off.height;CR.rot=0;CR.z=1;CR.ox=0;CR.oy=0;CR.pts.clear();CR.pd=0;
+    $('crop').hidden=false;
+    crSize();crRender();
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);toast('File bukan gambar yang valid.')};
+  img.src=url;
+}
+function tutupCrop(){$('crop').hidden=true;CR.img=null;CR.pts.clear();CR.pd=0}
+
+/* hasil akhir: persegi 280px, JPEG <= 45.000 karakter */
+function eksporFoto(){
+  const c=document.createElement('canvas');
+  let ukuran=280,q=.8,out='';
+  for(let n=0;n<10;n++){
+    c.width=c.height=ukuran;
+    crDraw(c.getContext('2d'),ukuran);
+    out=c.toDataURL('image/jpeg',q);
+    if(out.length<=40000)break;
+    q-=.1;
+    if(q<.45){q=.7;ukuran=Math.round(ukuran*.85)}
+  }
+  return out.length<=45000?out:null;
+}
+
+const cw=$('cvw');
+cw.addEventListener('pointerdown',e=>{
+  try{cw.setPointerCapture(e.pointerId)}catch(x){}
+  CR.pts.set(e.pointerId,{x:e.clientX,y:e.clientY});cw.classList.add('drag');
+  if(CR.pts.size===2){const a=[...CR.pts.values()];CR.pd=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)}else CR.pd=0;
+});
+cw.addEventListener('pointermove',e=>{
+  const p=CR.pts.get(e.pointerId);if(!p||!CR.img)return;
+  if(CR.pts.size===1){CR.ox+=e.clientX-p.x;CR.oy+=e.clientY-p.y}
+  p.x=e.clientX;p.y=e.clientY;
+  if(CR.pts.size===2){
+    const a=[...CR.pts.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);
+    if(CR.pd)setZoom(CR.z*d/CR.pd);
+    CR.pd=d;
+  }
+  crRender();
+});
+const crUp=e=>{CR.pts.delete(e.pointerId);CR.pd=0;if(!CR.pts.size)cw.classList.remove('drag')};
+cw.addEventListener('pointerup',crUp);
+cw.addEventListener('pointercancel',crUp);
+cw.addEventListener('wheel',e=>{e.preventDefault();setZoom(CR.z*(e.deltaY<0?1.08:1/1.08));crRender()},{passive:false});
+$('zrange').oninput=()=>{setZoom(parseFloat($('zrange').value)||1);crRender()};
+$('z-in').onclick=()=>{setZoom(CR.z+.25);crRender()};
+$('z-out').onclick=()=>{setZoom(CR.z-.25);crRender()};
+$('cr-rot').onclick=()=>{CR.rot=(CR.rot+90)%360;CR.ox=0;CR.oy=0;crRender()};
+$('cr-reset').onclick=()=>{CR.rot=0;CR.z=1;CR.ox=0;CR.oy=0;crRender()};
+$('cr-no').onclick=tutupCrop;
+window.addEventListener('resize',()=>{if(!$('crop').hidden){crSize();crRender()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('crop').hidden&&!UPLOADING)tutupCrop()});
 
 $('finp').onchange=()=>{
   const f=$('finp').files[0];
   if(!f||!CUR_NAMA||!CUR_PIN||UPLOADING)return;
-  busyFoto(true);toast('Memproses foto…');
-  kompres(f).then(data=>{
-    toast('Menyimpan foto…');
-    return fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'simpanFoto',nama:CUR_NAMA,pin:CUR_PIN,foto:data})})
-      .then(x=>x.json())
-      .then(o=>{
-        if(o.ok){
-          if(LAST_O){LAST_O.foto=data;saveSess(CUR_NAMA,CUR_PIN,LAST_O)}
-          setAvatar(data,CUR_NAMA);toast('Foto tersimpan ✓');
-        }else toast(o.msg||'Gagal menyimpan foto.');
-      });
-  })
-  .catch(e=>toast(e&&e.pesan?e.pesan:'Terjadi kesalahan jaringan.'))
-  .then(()=>{busyFoto(false);$('finp').value=''});
+  bukaCrop(f);
+};
+
+$('cr-ok').onclick=()=>{
+  if(UPLOADING||!CR.img)return;
+  const data=eksporFoto();
+  if(!data){toast('Foto terlalu besar, coba foto lain.');return}
+  busyFoto(true);$('cr-ok').textContent='Menyimpan…';
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'simpanFoto',nama:CUR_NAMA,pin:CUR_PIN,foto:data})})
+    .then(x=>x.json())
+    .then(o=>{
+      if(o.ok){
+        if(LAST_O){LAST_O.foto=data;saveSess(CUR_NAMA,CUR_PIN,LAST_O)}
+        setAvatar(data,CUR_NAMA);tutupCrop();toast('Foto tersimpan ✓');
+      }else toast(o.msg||'Gagal menyimpan foto.');
+    })
+    .catch(()=>toast('Terjadi kesalahan jaringan.'))
+    .then(()=>{busyFoto(false);$('cr-ok').textContent='Simpan foto'});
 };
 
 function hapusFoto(){
@@ -1202,17 +1345,19 @@ function hapusFoto(){
     .then(()=>busyFoto(false));
 }
 
-/* ===== SESI: tetap masuk saat refresh / geser ke bawah ===== */
+/* ===== SESI: tetap masuk saat refresh / geser ke bawah, tetapi berakhir saat aplikasi ditutup ===== */
 const SESS_KEY='kasbon_sess_v1', ADM_KEY='kasbon_adm_v1';
-function saveSess(n,pin,o){CUR_NAMA=n;CUR_PIN=pin;try{localStorage.setItem(SESS_KEY,JSON.stringify({nama:n,pin:pin,data:o}))}catch(e){}}
+function saveSess(n,pin,o){CUR_NAMA=n;CUR_PIN=pin;try{sessionStorage.setItem(SESS_KEY,JSON.stringify({nama:n,pin:pin,data:o}))}catch(e){}}
 function clearSess(){
   CUR_NAMA='';CUR_PIN='';LAST_O=null;
+  try{sessionStorage.removeItem(SESS_KEY)}catch(e){}
   try{localStorage.removeItem(SESS_KEY)}catch(e){}
   try{sessionStorage.removeItem(ADM_KEY)}catch(e){}
 }
 (function pulihkan(){
   let s=null,ap=null;
-  try{s=JSON.parse(localStorage.getItem(SESS_KEY)||'null')}catch(e){}
+  try{localStorage.removeItem(SESS_KEY)}catch(e){}   /* sesi lama (sebelum diubah) tidak dipakai lagi */
+  try{s=JSON.parse(sessionStorage.getItem(SESS_KEY)||'null')}catch(e){}
   try{ap=sessionStorage.getItem(ADM_KEY)}catch(e){}
 
   if(s&&s.data&&s.nama&&s.pin){
