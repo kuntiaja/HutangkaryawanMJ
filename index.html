@@ -527,6 +527,24 @@ function bicara(teks){
     speechSynthesis.speak(u);
   }catch(e){}
 }
+/* Bicara, lalu jalankan aksi setelah suara selesai (ada pengaman bila suara tidak bisa diputar) */
+function bicaraLalu(teks,lalu){
+  let selesai=false,mulai=false;
+  const akhir=()=>{if(selesai)return;selesai=true;lalu()};
+  if(!TTS){setTimeout(akhir,2500);return}
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(teks);
+    u.lang='id-ID';u.rate=0.9;u.pitch=1;u.volume=1;
+    const v=speechSynthesis.getVoices().find(x=>/^id([-_]|$)/i.test(x.lang));
+    if(v)u.voice=v;
+    u.onstart=()=>{mulai=true};
+    u.onend=akhir;u.onerror=akhir;
+    speechSynthesis.speak(u);
+    setTimeout(()=>{if(!mulai)akhir()},3000);   /* suara tidak mau mulai */
+    setTimeout(akhir,10000);                    /* batas maksimal */
+  }catch(e){setTimeout(akhir,2500)}
+}
 /* Saat halaman dimuat ulang: coba bicara sekarang; bila diblokir browser, ulangi di sentuhan pertama */
 function bicaraSesi(){
   if(window.stopMusik)stopMusik();
@@ -1016,6 +1034,34 @@ $('adm-out').onclick=()=>{
   $('a-rekap').innerHTML='';$('a-pin').innerHTML='';$('a-total').textContent='';$('apass').value='';
 };
 
+/* ===== BUNYI KEYPAD saat mengetik PIN ===== */
+(function(){
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return;
+  let c=null;
+  function tik(f){
+    try{
+      c=c||new AC();
+      if(c.state==='suspended')c.resume();
+      const t=c.currentTime,o=c.createOscillator(),g=c.createGain();
+      o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(0.18,t+0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.09);
+      o.connect(g);g.connect(c.destination);
+      o.start(t);o.stop(t+0.1);
+    }catch(e){}
+  }
+  ['pin','p0','p1','p2'].forEach(id=>{
+    const e=$(id);if(!e)return;
+    e.addEventListener('input',ev=>{
+      if(ev.inputType&&ev.inputType.indexOf('delete')===0){tik(520);return}
+      const d=(ev.data||e.value.slice(-1)||'').slice(-1);
+      if(/\d/.test(d))tik(600+Number(d)*45);
+    });
+  });
+})();
+
 /* ===== GANTI PIN (disimpan ke Spreadsheet lewat server) ===== */
 (function(){
   const m=$('pmod'),ids=['p0','p1','p2'];
@@ -1046,8 +1092,12 @@ $('adm-out').onclick=()=>{
       .then(r=>r.json())
       .then(o=>{
         if(o.ok){
-          CUR_PIN=b;if(LAST_O)saveSess(CUR_NAMA,b,LAST_O);
           busy=false;tutup();toast('PIN berhasil diganti ✓');
+          /* ucapkan, lalu keluar otomatis ke menu login */
+          bicaraLalu('PIN baru anda berhasil disimpan',()=>{
+            $('out-btn').click();
+            toast('Silakan masuk dengan PIN baru.');
+          });
         }else er.textContent=o.msg||'Gagal mengganti PIN.';
       })
       .catch(()=>{er.textContent='Terjadi kesalahan jaringan.'})
