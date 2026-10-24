@@ -332,6 +332,13 @@ table.lg{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric
 .rkt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
 .rr .amt{font-size:13px}
 
+/* Pilihan tampilan selalu terlihat (geser horizontal) */
+.vpanel{animation:none;padding:10px 10px 8px;margin-bottom:10px}
+.vgrid{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.vgrid::-webkit-scrollbar{display:none}
+.vgrid .vopt{flex:none;width:74px;padding:8px 2px 7px}
+.vgrid .vopt svg{width:38px;height:28px}
+
 /* Navigasi bawah */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;padding:0 16px calc(12px + env(safe-area-inset-bottom));pointer-events:none}
 .nav .in{
@@ -446,6 +453,11 @@ table.lg{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric
 <button class="ghost" id="adm-btn" type="button">Masuk Admin</button>
 </section>
 
+<!-- MEMUAT SESI -->
+<section id="boot" class="card" hidden>
+<p class="sub" style="margin:0;text-align:center">Memuat data…</p>
+</section>
+
 <!-- LOGIN ADMIN -->
 <section id="adm-login" class="card" hidden>
 <h2>Akses Admin</h2>
@@ -525,15 +537,10 @@ table.lg{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric
 <div class="card hist" id="histcard">
   <div class="card-head">
     <div><h3>Riwayat Transaksi</h3><p>Sejak <span id="m-awal">-</span></p></div>
-    <div class="hr">
-      <span class="badge" id="cnt"></span>
-      <button id="vbtn" class="icon-btn sm" type="button" aria-label="Pengaturan tampilan riwayat" title="Ubah tampilan">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
-      </button>
-    </div>
+    <span class="badge" id="cnt"></span>
   </div>
-  <div class="vpanel" id="vpanel" hidden>
-    <div class="vh">Pilih tampilan riwayat</div>
+  <div class="vpanel" id="vpanel">
+    <div class="vh">Pilih tampilan riwayat (geser ke samping untuk melihat 6 pilihan)</div>
     <div class="vgrid" id="vgrid"></div>
   </div>
   <div class="chips" id="chips">
@@ -823,16 +830,11 @@ function renderRows(){
 function buildViewPanel(){
   $('vgrid').innerHTML=VIEWS.map(v=>`<button type="button" class="vopt${v.id===VIEW?' on':''}" data-v="${v.id}">${v.svg}<span>${v.label}</span></button>`).join('');
 }
-$('vbtn').onclick=()=>{
-  const p=$('vpanel');p.hidden=!p.hidden;
-  $('vbtn').classList.toggle('on',!p.hidden);
-};
 $('vgrid').addEventListener('click',e=>{
   const b=e.target.closest('[data-v]');if(!b)return;
   VIEW=b.dataset.v;
   try{localStorage.setItem(VIEW_KEY,VIEW)}catch(err){}
   buildViewPanel();renderRows();
-  $('vpanel').hidden=true;$('vbtn').classList.remove('on');
 });
 buildViewPanel();
 
@@ -856,7 +858,7 @@ window.addEventListener('scroll',()=>{
   setNav($('histcard').getBoundingClientRect().top<window.innerHeight*.45?'hist':'home');
 },{passive:true});
 
-function show(o){
+function show(o,silent){
   const R=o.rows || [], s=R.length ? Number(R[R.length-1][4]) || 0 : 0;
   DATA=R;filter='all';limit=PAGE;
   [...$('chips').children].forEach(c=>c.classList.toggle('on',c.dataset.f==='all'));
@@ -892,7 +894,7 @@ function show(o){
   $('nav').hidden=false;
   document.body.classList.add('has-nav');
   setNav('home');
-  window.scrollTo(0,0);
+  if(!silent)window.scrollTo(0,0);
 
   const pct=lunas?100:(tb>0?Math.max(0,Math.min(100,Math.round(tp/tb*100))):0);
   setRing(pct);
@@ -902,8 +904,7 @@ function show(o){
   else if(s>0)teksSuara='Hutang '+o.nama+' '+terbilang(s)+' rupiah';
   else teksSuara='Hutang '+o.nama+' Lunas, kelebihan pembayaran '+terbilang(s)+' rupiah';
   $('suara').hidden=!TTS;
-  $('vpanel').hidden=true;$('vbtn').classList.remove('on');
-  bicara(teksSuara);
+  if(!silent)bicara(teksSuara);
 }
 
 function done(){$('go').disabled=false;$('go').textContent=BTN}
@@ -922,7 +923,7 @@ $('go').onclick=()=>{
   .then(res => res.json())
   .then(o => {
     done();
-    if(o.ok) { show(o); } else { err.textContent = o.msg; }
+    if(o.ok) { saveSess(n,pin,o); show(o); } else { err.textContent = o.msg; }
   })
   .catch(() => {
     done();
@@ -932,6 +933,7 @@ $('go').onclick=()=>{
 
 $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click()});
 $('out-btn').onclick=()=>{
+  clearSess();
   if(TTS){try{speechSynthesis.cancel()}catch(e){}}
   DATA=[];
   $('out').hidden=true;$('nav').hidden=true;
@@ -978,6 +980,7 @@ function showAdm(o){
     : '<div class="empty">Belum ada karyawan.</div>';
   tab('rekap');
   $('adm-login').hidden=true;
+  $('boot').hidden=true;
   $('adm').hidden=false;
   window.scrollTo(0,0);
 }
@@ -990,7 +993,7 @@ $('adm-go').onclick=()=>{
     .then(res=>res.json())
     .then(o=>{
       $('adm-go').disabled=false;$('adm-go').textContent='Masuk';
-      if(o.ok){$('apass').value='';showAdm(o)}else{err.textContent=o.msg||'Gagal.'}
+      if(o.ok){try{sessionStorage.setItem(ADM_KEY,p)}catch(e){}$('apass').value='';showAdm(o)}else{err.textContent=o.msg||'Gagal.'}
     })
     .catch(()=>{
       $('adm-go').disabled=false;$('adm-go').textContent='Masuk';
@@ -999,7 +1002,46 @@ $('adm-go').onclick=()=>{
 };
 $('apass').addEventListener('keydown',e=>{if(e.key==='Enter')$('adm-go').click()});
 
+/* ===== SESI: tetap masuk saat refresh / geser ke bawah ===== */
+const SESS_KEY='kasbon_sess_v1', ADM_KEY='kasbon_adm_v1';
+function saveSess(n,pin,o){try{localStorage.setItem(SESS_KEY,JSON.stringify({nama:n,pin:pin,data:o}))}catch(e){}}
+function clearSess(){
+  try{localStorage.removeItem(SESS_KEY)}catch(e){}
+  try{sessionStorage.removeItem(ADM_KEY)}catch(e){}
+}
+(function pulihkan(){
+  let s=null,ap=null;
+  try{s=JSON.parse(localStorage.getItem(SESS_KEY)||'null')}catch(e){}
+  try{ap=sessionStorage.getItem(ADM_KEY)}catch(e){}
+
+  if(s&&s.data&&s.nama&&s.pin){
+    /* tampilkan data tersimpan seketika, lalu perbarui diam-diam */
+    show(s.data,true);
+    fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'cekHutang',nama:s.nama,pin:s.pin})})
+      .then(r=>r.json())
+      .then(o=>{
+        if(o.ok){
+          if(JSON.stringify(o.rows)!==JSON.stringify(s.data.rows)||o.jabatan!==s.data.jabatan){
+            saveSess(s.nama,s.pin,o);show(o,true);
+          }
+        }else{
+          $('out-btn').click();
+          $('err').textContent='Sesi berakhir, silakan masuk lagi.';
+        }
+      })
+      .catch(()=>{});
+  }else if(ap){
+    $('login').hidden=true;$('boot').hidden=false;
+    const balik=()=>{$('boot').hidden=true;$('login').hidden=false};
+    fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'adminData',pass:ap})})
+      .then(r=>r.json())
+      .then(o=>{if(o.ok){showAdm(o)}else{try{sessionStorage.removeItem(ADM_KEY)}catch(e){}balik()}})
+      .catch(balik);
+  }
+})();
+
 $('adm-out').onclick=()=>{
+  clearSess();
   $('adm').hidden=true;$('login').hidden=false;
   $('a-rekap').innerHTML='';$('a-pin').innerHTML='';$('a-total').textContent='';$('apass').value='';
 };
