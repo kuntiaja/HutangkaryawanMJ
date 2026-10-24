@@ -240,7 +240,15 @@ body.has-nav .ibar{bottom:calc(96px + env(safe-area-inset-bottom))}
 
 html{color-scheme:light}
 select option{background:#fff;color:#0f1a3d}
-#pin,#apass{-webkit-text-security:disc;text-security:disc}
+#pin,#apass,.pi{-webkit-text-security:disc;text-security:disc}
+.pi{letter-spacing:.5em;text-align:center;font-weight:700;font-size:18px;padding-left:calc(16px + .5em)}
+.pi::placeholder{letter-spacing:.45em;color:#c3c9d9}
+.pmod{position:fixed;inset:0;z-index:85;background:rgba(10,16,40,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;justify-content:center;align-items:flex-start;padding:max(16px,env(safe-area-inset-top)) 16px 16px;overflow:auto}
+.pbox{width:100%;max-width:360px;margin-top:3vh;background:#fff;border-radius:24px;padding:18px;box-shadow:0 30px 70px -14px rgba(0,0,0,.55)}
+.pbox h3{margin:0 0 4px;font-size:18px;font-weight:800}
+.pbox>p{margin:0 0 14px;font-size:12.5px;color:var(--mute);line-height:1.4}
+.pbox>p#perr{color:var(--red);font-weight:600;text-align:center;min-height:16px;margin:0 0 4px}
+
 .sel{display:block;width:100%;height:46px;margin:0 0 12px;padding:0 44px 0 16px;border:1.5px solid #e6e9f3;border-radius:13px;color:var(--ink);font:inherit;font-size:16px;font-weight:500;text-align:left;box-shadow:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   background:var(--soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1.5l6 6 6-6' fill='none' stroke='%233d5afe' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 16px center}
 .sel:active{transform:none}
@@ -384,6 +392,20 @@ select option{background:#fff;color:#0f1a3d}
 </p>
 </div>
 
+<div class="pmod" id="pmod" hidden>
+  <div class="pbox" role="dialog" aria-label="Ganti PIN">
+    <h3>Ganti PIN</h3>
+    <p>Pilih PIN baru 6 angka yang mudah Anda ingat. PIN baru juga tercatat di data admin.</p>
+    <label for="p0">PIN lama</label>
+    <input id="p0" class="pi" type="text" inputmode="numeric" maxlength="6" name="kb0" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore placeholder="••••••">
+    <label for="p1">PIN baru</label>
+    <input id="p1" class="pi" type="text" inputmode="numeric" maxlength="6" name="kb1" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore placeholder="••••••">
+    <label for="p2">Ulangi PIN baru</label>
+    <input id="p2" class="pi" type="text" inputmode="numeric" maxlength="6" name="kb2" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore placeholder="••••••">
+    <p id="perr" role="alert"></p>
+    <div class="crop-act"><button type="button" class="ghost" id="p-no">Batal</button><button type="button" id="p-ok">Simpan PIN</button></div>
+  </div>
+</div>
 <div class="nsheet" id="nsheet" hidden><div class="nbox" role="listbox"><div class="nh">Pilih nama Anda</div><div class="nlist" id="nlist"></div></div></div>
 <input type="file" id="finp" accept="image/*" hidden>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -432,6 +454,7 @@ select option{background:#fff;color:#0f1a3d}
   <div class="in">
     <button type="button" id="n-home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Ringkasan</button>
     <button type="button" id="n-hist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg>Riwayat</button>
+    <button type="button" id="n-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M16 7l3 3M14 9l2 2"/></svg>Ganti PIN</button>
     <button type="button" id="out-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Keluar</button>
   </div>
 </nav>
@@ -445,7 +468,7 @@ function setH(){if(kbOn)return;baseH=window.innerHeight;document.documentElement
 setH();
 ['resize','orientationchange','pageshow','load'].forEach(e=>window.addEventListener(e,setH));
 /* Tampilan login TIDAK berubah. Saat mengetik di kotak PIN/password, halaman hanya digeser ke atas agar kotak terlihat di atas keypad */
-const isTxt=t=>t&&t.tagName==='INPUT';
+const isTxt=t=>t&&t.tagName==='INPUT'&&!t.closest('#pmod');
 function naik(){
   const w=document.querySelector('.wrap'),vv=window.visualViewport,el=document.activeElement;
   if(!vv||!isTxt(el)||el.type==='file'||el.type==='range')return;
@@ -983,6 +1006,45 @@ $('adm-out').onclick=()=>{
   $('adm').hidden=true;$('login').hidden=false;
   $('a-rekap').innerHTML='';$('a-pin').innerHTML='';$('a-total').textContent='';$('apass').value='';
 };
+
+/* ===== GANTI PIN (disimpan ke Spreadsheet lewat server) ===== */
+(function(){
+  const m=$('pmod'),ids=['p0','p1','p2'];
+  let busy=false;
+  ids.forEach(id=>{
+    const e=$(id);
+    e.addEventListener('input',()=>{e.value=e.value.replace(/\D/g,'').slice(0,6)});
+    e.addEventListener('focus',()=>setTimeout(()=>e.scrollIntoView({block:'center',behavior:'smooth'}),350));
+  });
+  function tutup(){
+    if(busy)return;
+    m.hidden=true;ids.forEach(id=>{$(id).value=''});
+    if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+  }
+  $('n-pin').onclick=()=>{ids.forEach(id=>{$(id).value=''});$('perr').textContent='';m.hidden=false;setTimeout(()=>$('p0').focus(),150)};
+  $('p-no').onclick=tutup;
+  m.addEventListener('click',e=>{if(e.target===m)tutup()});
+  $('p2').addEventListener('keydown',e=>{if(e.key==='Enter')$('p-ok').click()});
+  $('p-ok').onclick=()=>{
+    if(busy)return;
+    const a=$('p0').value,b=$('p1').value,c=$('p2').value,er=$('perr');er.textContent='';
+    if(!/^\d{6}$/.test(a)){er.textContent='PIN lama harus 6 angka.';return}
+    if(!/^\d{6}$/.test(b)){er.textContent='PIN baru harus 6 angka.';return}
+    if(b!==c){er.textContent='Pengulangan PIN baru tidak sama.';return}
+    if(a===b){er.textContent='PIN baru tidak boleh sama dengan PIN lama.';return}
+    busy=true;$('p-ok').disabled=true;$('p-ok').textContent='Menyimpan…';
+    fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'gantiPin',nama:CUR_NAMA,pin:a,pinBaru:b})})
+      .then(r=>r.json())
+      .then(o=>{
+        if(o.ok){
+          CUR_PIN=b;if(LAST_O)saveSess(CUR_NAMA,b,LAST_O);
+          busy=false;tutup();toast('PIN berhasil diganti ✓');
+        }else er.textContent=o.msg||'Gagal mengganti PIN.';
+      })
+      .catch(()=>{er.textContent='Terjadi kesalahan jaringan.'})
+      .then(()=>{busy=false;$('p-ok').disabled=false;$('p-ok').textContent='Simpan PIN'});
+  };
+})();
 
 /* ===== PWA ===== */
 (function(){
