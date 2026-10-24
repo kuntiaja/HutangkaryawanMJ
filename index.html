@@ -258,6 +258,15 @@ select option{background:#fff;color:#0f1a3d}
 .nlist{overflow-y:auto;overscroll-behavior:contain}
 .ni{display:block;width:100%;height:52px;padding:0 14px;text-align:left;background:#fff;color:var(--ink);font-size:15.5px;font-weight:600;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none}
 .ni.on{background:var(--primary-soft);color:var(--primary);font-weight:800}
+
+/* Menu login & beranda admin: terkunci 1 layar (tidak bisa digeser), semua isi termasuk catatan bawah terlihat */
+html:has(#login:not([hidden])),html:has(#adm-login:not([hidden])),html:has(#adm:not([hidden])){overflow:hidden}
+body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:not([hidden])){overflow:hidden;min-height:0;height:var(--app-h,100dvh)}
+.wrap:has(#adm:not([hidden])){height:calc(var(--app-h,100vh) - 12px - env(safe-area-inset-bottom))}
+#adm{flex:1 1 0;min-height:0}
+#adm>.card.stat,#adm>.tabs,#adm>button{flex:none}
+#adm>.card:not(.stat){flex:1 1 0;min-height:0;display:flex;flex-direction:column}
+#adm .list{max-height:none;flex:1 1 0;min-height:0}
 </style>
 </head>
 <body>
