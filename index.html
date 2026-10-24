@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f2f4fb">
+<meta name="description" content="Cek saldo dan riwayat kas bon karyawan Merdeka Jaya.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kas Bon">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
 <title>Cek Kas Bon Karyawan</title>
 <link rel="preconnect" href="https://script.google.com">
 <link rel="preconnect" href="https://script.googleusercontent.com">
@@ -339,23 +348,52 @@ table.lg{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric
 .vgrid .vopt{flex:none;width:74px;padding:8px 2px 7px}
 .vgrid .vopt svg{width:38px;height:28px}
 
-/* Foto karyawan */
+/* Foto profil (diunggah karyawan sendiri) */
 .av.ph{background-size:cover;background-position:center;background-repeat:no-repeat;color:transparent;font-size:0}
-.top .av{width:54px;height:54px;border-radius:18px}
-.top .av.ph{cursor:zoom-in;box-shadow:0 10px 18px -6px rgba(16,26,61,.35),0 0 0 3px #fff}
-.item.fr .av{cursor:pointer}
-.facts{display:flex;gap:6px;flex:none}
-.mini-btn{width:auto;height:34px;padding:0 12px;font-size:12.5px;font-weight:700;border-radius:11px;box-shadow:none;background:var(--primary-soft);color:var(--primary)}
-.mini-btn.danger{background:var(--red-bg);color:var(--red)}
+.avwrap{position:relative;flex:none;width:54px;height:54px}
+.top .av{width:54px;height:54px;border-radius:18px;cursor:pointer}
+.top .av.ph{box-shadow:0 10px 18px -6px rgba(16,26,61,.35),0 0 0 3px #fff}
+.cam{
+  position:absolute;right:-7px;bottom:-7px;width:28px;height:28px;padding:0;border-radius:50%;display:grid;place-items:center;
+  background:var(--primary);color:#fff;border:2.5px solid #fff;box-shadow:0 6px 12px -4px rgba(61,90,254,.7);
+}
+.cam svg{width:13px;height:13px}
 .toast{
-  position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;
+  position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:90;
   max-width:88vw;padding:12px 18px;border-radius:14px;background:var(--navy);color:#fff;font-size:13.5px;font-weight:700;
   box-shadow:0 16px 36px -10px rgba(16,26,61,.5);animation:rise .25s both;text-align:center;
 }
-.lb{position:fixed;inset:0;z-index:70;background:rgba(10,16,40,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:24px;cursor:zoom-out;animation:rise .2s both}
-.lb-in{text-align:center;color:#fff}
-.lb img{display:block;margin:0 auto;width:min(78vw,340px);aspect-ratio:1;object-fit:cover;border-radius:28px;border:4px solid #fff;box-shadow:0 30px 60px -10px rgba(0,0,0,.5)}
+.lb{position:fixed;inset:0;z-index:70;background:rgba(10,16,40,.74);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:24px;animation:rise .2s both}
+.lb-in{text-align:center;color:#fff;width:100%;max-width:340px}
+.lb img,.lb-ph{display:block;margin:0 auto;width:min(72vw,300px);aspect-ratio:1;object-fit:cover;border-radius:28px;border:4px solid #fff;box-shadow:0 30px 60px -10px rgba(0,0,0,.5)}
+.lb-ph{display:grid;place-items:center;font-size:110px;font-weight:800;background:linear-gradient(145deg,#7f8fff,#3d5afe)}
 .lb-n{margin-top:14px;font-size:17px;font-weight:800}
+.lb-act{display:flex;gap:10px;justify-content:center;margin-top:16px}
+.lbb{flex:1;width:auto;max-width:170px;height:48px;font-size:15px;border-radius:14px}
+.lbb.danger{background:#fff1f0;color:var(--red);box-shadow:none}
+.lbx{width:auto;height:auto;margin-top:8px;padding:8px 16px;background:transparent;color:rgba(255,255,255,.85);box-shadow:none;font-size:14px}
+.lb-h{margin:4px 0 0;font-size:11.5px;color:rgba(255,255,255,.6)}
+
+/* Banner pasang aplikasi (PWA) */
+@keyframes up{from{opacity:0;transform:translate(-50%,26px)}to{opacity:1;transform:translate(-50%,0)}}
+.ibar{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));z-index:60;
+  width:calc(100% - 32px);max-width:448px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px;border-radius:22px;
+  background:rgba(255,255,255,.97);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 22px 50px -12px rgba(16,26,61,.4),0 0 0 1px var(--line);animation:up .45s cubic-bezier(.2,.8,.2,1) both;
+}
+body.has-nav .ibar{bottom:calc(96px + env(safe-area-inset-bottom))}
+.ibar-ic{flex:none;width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,var(--primary-2),var(--primary));box-shadow:0 10px 18px -6px rgba(61,90,254,.55)}
+.ibar-ic svg{width:23px;height:23px}
+.ibar-t{flex:1;min-width:0}
+.ibar-t b{display:block;font-size:14px;font-weight:800;color:var(--ink)}
+.ibar-t span{display:block;font-size:12px;color:var(--mute);font-weight:600;line-height:1.35;margin-top:2px}
+.ibar-b{flex:1 1 100%;display:flex;align-items:center;gap:8px}
+#ibar-go{flex:1.5;width:auto;height:44px;padding:0 16px;border-radius:13px;font-size:15px;box-shadow:0 10px 16px -8px rgba(61,90,254,.7)}
+#ibar-x{flex:1;width:auto;height:44px;padding:0 16px;border-radius:13px;background:var(--soft);color:var(--ink-2);box-shadow:none;font-size:15px}
+body.ib-on{padding-bottom:calc(210px + env(safe-area-inset-bottom))}
+body.has-nav.ib-on{padding-bottom:calc(300px + env(safe-area-inset-bottom))}
+.linkbtn{width:auto;height:auto;padding:7px 14px;background:var(--primary-soft);color:var(--primary);font-size:12.5px;font-weight:700;border-radius:999px;box-shadow:none}
 
 /* Navigasi bawah */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;padding:0 16px calc(12px + env(safe-area-inset-bottom));pointer-events:none}
@@ -401,7 +439,8 @@ table.lg{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric
 }
 .tabs button.on{background:#fff;color:var(--primary);box-shadow:0 4px 10px rgba(16,26,61,.10)}
 
-.note{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--mute);text-align:center;margin:4px 0 0}
+.note{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-size:12px;color:var(--mute);text-align:center;margin:4px 0 0}
+.note .nt{display:flex;align-items:center;justify-content:center;gap:6px}
 .note svg{width:13px;height:13px;flex:none}
 [hidden]{display:none!important}
 @media (max-width:370px){
@@ -496,12 +535,10 @@ table.lg{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric
 <div class="tabs">
 <button id="t-rekap" class="on" type="button">Rekap</button>
 <button id="t-pin" type="button">Nama &amp; PIN</button>
-<button id="t-foto" type="button">Foto</button>
 </div>
 <div class="card" style="padding:8px 16px">
 <div class="list" id="v-rekap"><div id="a-rekap"></div></div>
 <div class="list" id="v-pin" hidden><div id="a-pin"></div></div>
-<div class="list" id="v-foto" hidden><div id="a-foto"></div></div>
 </div>
 <button class="ghost" id="adm-out" type="button">Keluar Admin</button>
 </section>
@@ -509,8 +546,13 @@ table.lg{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric
 <!-- HASIL KARYAWAN -->
 <section id="out" hidden>
 <div class="top">
-  <div class="av" id="av"></div>
-  <div class="hi"><span>Halo, selamat datang 👋</span><b id="nm"></b></div>
+  <div class="avwrap">
+    <div class="av" id="av" role="button" tabindex="0" aria-label="Lihat foto profil"></div>
+    <button type="button" class="cam" id="cam" aria-label="Tambah atau ganti foto profil">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg>
+    </button>
+  </div>
+  <div class="hi"><span>Halo 👋</span><b id="nm"></b></div>
   <span id="jab"></span>
   <button id="suara" class="icon-btn" type="button" hidden aria-label="Putar ulang suara">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
@@ -574,15 +616,39 @@ table.lg{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric
 </section>
 
 <p class="note" id="note">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
-  Data bersifat pribadi, jangan bagikan PIN Anda.
+  <span class="nt">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+    Data bersifat pribadi, jangan bagikan PIN Anda.
+  </span>
+  <button type="button" class="linkbtn" id="inst-link" hidden>📲 Pasang aplikasi di HP</button>
 </p>
 </div>
 
 <input type="file" id="finp" accept="image/*" hidden>
 <div class="toast" id="toast" role="status" hidden></div>
 <div class="lb" id="lb" hidden>
-  <div class="lb-in"><img id="lbimg" alt="Foto karyawan"><div class="lb-n" id="lbname"></div></div>
+  <div class="lb-in">
+    <img id="lbimg" alt="Foto profil" hidden>
+    <div class="lb-ph" id="lbph" hidden></div>
+    <div class="lb-n" id="lbname"></div>
+    <div class="lb-act">
+      <button type="button" id="lb-up" class="lbb">Tambah foto</button>
+      <button type="button" id="lb-del" class="lbb danger" hidden>Hapus</button>
+    </div>
+    <button type="button" id="lb-x" class="lbx">Tutup</button>
+    <p class="lb-h">Foto hanya bisa diubah oleh Anda sendiri.</p>
+  </div>
+</div>
+
+<div class="ibar" id="ibar" role="dialog" aria-label="Pasang aplikasi" hidden>
+  <div class="ibar-ic" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>
+  </div>
+  <div class="ibar-t"><b id="ibar-h">Pasang aplikasi Kas Bon</b><span id="ibar-s"></span></div>
+  <div class="ibar-b">
+    <button type="button" id="ibar-go">Pasang</button>
+    <button type="button" id="ibar-x">Nanti</button>
+  </div>
 </div>
 
 <!-- NAV BAWAH (karyawan) -->
@@ -891,11 +957,7 @@ function show(o,silent){
 
   $('jab').textContent=o.jabatan;
   $('nm').textContent=o.nama;
-  const fotoOk=safeImg(o.foto);CUR_FOTO=fotoOk;
-  const avEl=$('av');
-  avEl.classList.toggle('ph',!!fotoOk);
-  avEl.style.backgroundImage=fotoOk?"url('"+fotoOk+"')":'';
-  avEl.textContent=fotoOk?'':String(o.nama||'?').trim().charAt(0).toUpperCase();
+  LAST_O=o;setAvatar(o.foto,o.nama);
   $('asof').textContent=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric',timeZone:'Asia/Jakarta'});
 
   const lunas=(s===0);
@@ -982,17 +1044,14 @@ function tab(t){
   $('t-pin').classList.toggle('on',t==='pin');
   $('v-rekap').hidden=t!=='rekap';
   $('v-pin').hidden=t!=='pin';
-  $('t-foto').classList.toggle('on',t==='foto');
-  $('v-foto').hidden=t!=='foto';
 }
 $('t-rekap').onclick=()=>tab('rekap');
 $('t-pin').onclick=()=>tab('pin');
-$('t-foto').onclick=()=>tab('foto');
 
 $('adm-btn').onclick=()=>{$('err').textContent='';$('login').hidden=true;$('adm-login').hidden=false;$('apass').focus()};
 $('adm-back').onclick=()=>{$('adm-login').hidden=true;$('login').hidden=false;$('apass').value='';$('aerr').textContent=''};
 
-function showAdm(o,keep){
+function showAdm(o){
   const L=o.rows||[];
   $('a-total').textContent=(o.totalSisa<0?'-':'')+rp(o.totalSisa||0);
   $('a-rekap').innerHTML=L.length
@@ -1011,13 +1070,11 @@ function showAdm(o,keep){
           <div class="pinbox">${r.pin?esc(r.pin):'-'}</div>
         </div>`).join('')
     : '<div class="empty">Belum ada karyawan.</div>';
-  ADM_ROWS=L;ADM_TOTAL=o.totalSisa||0;
-  renderFotoTab();
-  if(!keep)tab('rekap');
+  tab('rekap');
   $('adm-login').hidden=true;
   $('boot').hidden=true;
   $('adm').hidden=false;
-  if(!keep)window.scrollTo(0,0);
+  window.scrollTo(0,0);
 }
 
 $('adm-go').onclick=()=>{
@@ -1028,7 +1085,7 @@ $('adm-go').onclick=()=>{
     .then(res=>res.json())
     .then(o=>{
       $('adm-go').disabled=false;$('adm-go').textContent='Masuk';
-      if(o.ok){ADM_PASS=p;try{sessionStorage.setItem(ADM_KEY,p)}catch(e){}$('apass').value='';showAdm(o)}else{err.textContent=o.msg||'Gagal.'}
+      if(o.ok){try{sessionStorage.setItem(ADM_KEY,p)}catch(e){}$('apass').value='';showAdm(o)}else{err.textContent=o.msg||'Gagal.'}
     })
     .catch(()=>{
       $('adm-go').disabled=false;$('adm-go').textContent='Masuk';
@@ -1037,12 +1094,12 @@ $('adm-go').onclick=()=>{
 };
 $('apass').addEventListener('keydown',e=>{if(e.key==='Enter')$('adm-go').click()});
 
-/* ===== FOTO KARYAWAN (hanya admin yang bisa mengunggah) ===== */
-let ADM_PASS='',ADM_ROWS=[],ADM_TOTAL=0,CUR_FOTO='',FOTO_IDX=-1,toastT;
+/* ===== FOTO PROFIL (karyawan mengunggah sendiri, dilindungi PIN) ===== */
+let CUR_NAMA='',CUR_PIN='',CUR_FOTO='',LAST_O=null,UPLOADING=false,toastT;
 
 function toast(m){
   const t=$('toast');t.textContent=m;t.hidden=false;
-  clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true},2800);
+  clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true},3000);
 }
 function safeImg(u){return /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(u||'')?u:''}
 function avH(r,i,attr){
@@ -1051,39 +1108,47 @@ function avH(r,i,attr){
     ? `<div class="av sm ph" ${attr||''} style="background-image:url('${f}')"></div>`
     : `<div class="${avc(r,i)}" ${attr||''}>${esc(String(r.nama||'?').trim().charAt(0).toUpperCase())}</div>`;
 }
+const inisial=n=>String(n||'?').trim().charAt(0).toUpperCase();
 
-/* Lightbox foto (sisi karyawan) */
-$('av').onclick=()=>{
-  if(!CUR_FOTO)return;
-  $('lbimg').src=CUR_FOTO;$('lbname').textContent=$('nm').textContent;$('lb').hidden=false;
-};
-$('lb').onclick=()=>{$('lb').hidden=true};
-
-/* Tab Foto (admin) */
-function renderFotoTab(){
-  $('a-foto').innerHTML=ADM_ROWS.length?ADM_ROWS.map((r,i)=>{
-    const ada=!!safeImg(r.foto);
-    return `<div class="item fr">
-      ${avH(r,i,'data-up="'+i+'"')}
-      <div class="l"><div class="t">${esc(r.nama)}</div><div class="s">${esc(r.jabatan)} · ${ada?'Ada foto':'Belum ada foto'}</div></div>
-      <div class="facts"><button type="button" class="mini-btn" data-up="${i}">${ada?'Ganti':'Unggah'}</button>${ada?`<button type="button" class="mini-btn danger" data-del="${i}">Hapus</button>`:''}</div>
-    </div>`;
-  }).join(''):'<div class="empty">Belum ada karyawan.</div>';
+function setAvatar(f,nama){
+  const ok=safeImg(f);CUR_FOTO=ok;
+  const el=$('av');
+  el.classList.toggle('ph',!!ok);
+  el.style.backgroundImage=ok?"url('"+ok+"')":'';
+  el.textContent=ok?'':inisial(nama);
+  refreshLb(nama);
 }
-$('a-foto').addEventListener('click',e=>{
-  const u=e.target.closest('[data-up]'),d=e.target.closest('[data-del]');
-  if(u){FOTO_IDX=Number(u.dataset.up);$('finp').value='';$('finp').click()}
-  else if(d){hapusFoto(Number(d.dataset.del))}
-});
+function refreshLb(nama){
+  const n=nama||$('nm').textContent,ada=!!CUR_FOTO;
+  if(ada)$('lbimg').src=CUR_FOTO;
+  $('lbimg').hidden=!ada;
+  $('lbph').hidden=ada;$('lbph').textContent=inisial(n);
+  $('lb-del').hidden=!ada;
+  $('lb-up').textContent=ada?'Ganti foto':'Tambah foto';
+  $('lbname').textContent=n;
+}
+function busyFoto(b){
+  UPLOADING=b;
+  ['lb-up','lb-del','cam'].forEach(id=>{$(id).disabled=b});
+}
+function pilihFoto(){if(UPLOADING)return;$('finp').value='';$('finp').click()}
 
-/* Perkecil & potong persegi di perangkat sebelum diunggah */
+$('av').onclick=()=>{refreshLb();$('lb').hidden=false};
+$('av').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('av').click()}});
+$('cam').onclick=pilihFoto;
+$('lb-up').onclick=pilihFoto;
+$('lb-del').onclick=()=>hapusFoto();
+$('lb-x').onclick=()=>{$('lb').hidden=true};
+$('lb').onclick=e=>{if(e.target===$('lb'))$('lb').hidden=true};
+
+/* Perkecil & potong persegi di HP sebelum diunggah */
 function kompres(file){
   return new Promise((ok,gagal)=>{
     const url=URL.createObjectURL(file),img=new Image();
     img.onload=()=>{
       URL.revokeObjectURL(url);
       const sisi=Math.min(img.naturalWidth,img.naturalHeight);
-      if(!sisi){gagal(new Error('Gambar tidak valid'));return}
+      if(!sisi){gagal({pesan:'Gambar tidak valid.'});return}
       const sx=(img.naturalWidth-sisi)/2,sy=(img.naturalHeight-sisi)/2;
       let ukuran=280,q=.8,out='';
       for(let n=0;n<10;n++){
@@ -1095,44 +1160,53 @@ function kompres(file){
         q-=.1;
         if(q<.45){q=.7;ukuran=Math.round(ukuran*.85)}
       }
-      out.length<=45000?ok(out):gagal(new Error('Foto terlalu besar, coba foto lain.'));
+      out.length<=45000?ok(out):gagal({pesan:'Foto terlalu besar, coba foto lain.'});
     };
-    img.onerror=()=>{URL.revokeObjectURL(url);gagal(new Error('File bukan gambar yang valid.'))};
+    img.onerror=()=>{URL.revokeObjectURL(url);gagal({pesan:'File bukan gambar yang valid.'})};
     img.src=url;
   });
 }
 
 $('finp').onchange=()=>{
-  const f=$('finp').files[0],r=ADM_ROWS[FOTO_IDX];
-  if(!f||!r)return;
-  toast('Memproses foto…');
+  const f=$('finp').files[0];
+  if(!f||!CUR_NAMA||!CUR_PIN||UPLOADING)return;
+  busyFoto(true);toast('Memproses foto…');
   kompres(f).then(data=>{
-    toast('Menyimpan foto '+r.nama+'…');
-    return fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'simpanFoto',pass:ADM_PASS,nama:r.nama,foto:data})})
+    toast('Menyimpan foto…');
+    return fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'simpanFoto',nama:CUR_NAMA,pin:CUR_PIN,foto:data})})
       .then(x=>x.json())
       .then(o=>{
-        if(o.ok){r.foto=data;showAdm({rows:ADM_ROWS,totalSisa:ADM_TOTAL},true);toast('Foto '+r.nama+' tersimpan ✓')}
-        else toast(o.msg||'Gagal menyimpan foto.');
+        if(o.ok){
+          if(LAST_O){LAST_O.foto=data;saveSess(CUR_NAMA,CUR_PIN,LAST_O)}
+          setAvatar(data,CUR_NAMA);toast('Foto tersimpan ✓');
+        }else toast(o.msg||'Gagal menyimpan foto.');
       });
-  }).catch(e=>toast(e&&e.message?e.message:'Gagal memproses foto.'));
+  })
+  .catch(e=>toast(e&&e.pesan?e.pesan:'Terjadi kesalahan jaringan.'))
+  .then(()=>{busyFoto(false);$('finp').value=''});
 };
 
-function hapusFoto(i){
-  const r=ADM_ROWS[i];if(!r)return;
-  if(!confirm('Hapus foto '+r.nama+'?'))return;
-  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'hapusFoto',pass:ADM_PASS,nama:r.nama})})
+function hapusFoto(){
+  if(UPLOADING||!CUR_FOTO)return;
+  if(!confirm('Hapus foto profil Anda?'))return;
+  busyFoto(true);
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'hapusFoto',nama:CUR_NAMA,pin:CUR_PIN})})
     .then(x=>x.json())
     .then(o=>{
-      if(o.ok){r.foto='';showAdm({rows:ADM_ROWS,totalSisa:ADM_TOTAL},true);toast('Foto dihapus')}
-      else toast(o.msg||'Gagal menghapus foto.');
+      if(o.ok){
+        if(LAST_O){LAST_O.foto='';saveSess(CUR_NAMA,CUR_PIN,LAST_O)}
+        setAvatar('',CUR_NAMA);toast('Foto dihapus');
+      }else toast(o.msg||'Gagal menghapus foto.');
     })
-    .catch(()=>toast('Terjadi kesalahan jaringan.'));
+    .catch(()=>toast('Terjadi kesalahan jaringan.'))
+    .then(()=>busyFoto(false));
 }
 
 /* ===== SESI: tetap masuk saat refresh / geser ke bawah ===== */
 const SESS_KEY='kasbon_sess_v1', ADM_KEY='kasbon_adm_v1';
-function saveSess(n,pin,o){try{localStorage.setItem(SESS_KEY,JSON.stringify({nama:n,pin:pin,data:o}))}catch(e){}}
+function saveSess(n,pin,o){CUR_NAMA=n;CUR_PIN=pin;try{localStorage.setItem(SESS_KEY,JSON.stringify({nama:n,pin:pin,data:o}))}catch(e){}}
 function clearSess(){
+  CUR_NAMA='';CUR_PIN='';LAST_O=null;
   try{localStorage.removeItem(SESS_KEY)}catch(e){}
   try{sessionStorage.removeItem(ADM_KEY)}catch(e){}
 }
@@ -1143,6 +1217,7 @@ function clearSess(){
 
   if(s&&s.data&&s.nama&&s.pin){
     /* tampilkan data tersimpan seketika, lalu perbarui diam-diam */
+    CUR_NAMA=s.nama;CUR_PIN=s.pin;
     show(s.data,true);
     fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'cekHutang',nama:s.nama,pin:s.pin})})
       .then(r=>r.json())
@@ -1162,17 +1237,81 @@ function clearSess(){
     const balik=()=>{$('boot').hidden=true;$('login').hidden=false};
     fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'adminData',pass:ap})})
       .then(r=>r.json())
-      .then(o=>{if(o.ok){ADM_PASS=ap;showAdm(o)}else{try{sessionStorage.removeItem(ADM_KEY)}catch(e){}balik()}})
+      .then(o=>{if(o.ok){showAdm(o)}else{try{sessionStorage.removeItem(ADM_KEY)}catch(e){}balik()}})
       .catch(balik);
   }
 })();
 
 $('adm-out').onclick=()=>{
   clearSess();
-  ADM_PASS='';ADM_ROWS=[];
   $('adm').hidden=true;$('login').hidden=false;
-  $('a-rekap').innerHTML='';$('a-pin').innerHTML='';$('a-foto').innerHTML='';$('a-total').textContent='';$('apass').value='';
+  $('a-rekap').innerHTML='';$('a-pin').innerHTML='';$('a-total').textContent='';$('apass').value='';
 };
+
+/* ===== PWA: bisa dipasang di HP ===== */
+(function(){
+  if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){
+    window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});
+  }
+  const INST='kasbon_installed',SKIP='kasbon_install_skip';
+  const get=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+  const put=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+  const standalone=matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone===true;
+  if(standalone){put(INST,'1');return}               /* sudah berjalan sebagai aplikasi */
+
+  const ua=navigator.userAgent||'';
+  const iOS=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const android=/Android/i.test(ua);
+  const inapp=/FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|; wv\)/i.test(ua);
+  let dp=null;
+  const skipped=()=>{const t=Number(get(SKIP)||0);return t>0&&Date.now()-t<3*864e5};  /* tunda 3 hari */
+  const mode=()=>dp?'prompt':(inapp?'inapp':(iOS?'ios':'manual'));
+  const T={
+    prompt:['Pasang aplikasi Kas Bon','Buka lebih cepat dari layar utama HP, tanpa mengetik link lagi.','Pasang'],
+    ios:['Pasang di iPhone','Ketuk tombol Bagikan (kotak dengan panah ke atas) di Safari, lalu pilih “Tambah ke Layar Utama”.','Mengerti'],
+    inapp:['Buka di browser dulu','Buka link ini di Chrome (atau Safari di iPhone), lalu pasang aplikasinya dari sana.','Mengerti'],
+    manual:['Pasang aplikasi Kas Bon','Buka menu ⋮ di browser, lalu pilih “Pasang aplikasi” atau “Tambahkan ke layar utama”.','Mengerti']
+  };
+  const bar=$('ibar'),link=$('inst-link');
+  function syncLink(){link.hidden=!(dp||iOS||android)}
+  function tutup(simpan){
+    bar.hidden=true;document.body.classList.remove('ib-on');
+    if(simpan)put(SKIP,String(Date.now()));
+    syncLink();
+  }
+  function tampil(){
+    const m=mode(),t=T[m];
+    $('ibar-h').textContent=t[0];$('ibar-s').textContent=t[1];
+    $('ibar-go').textContent=t[2];$('ibar-go').hidden=(m!=='prompt');
+    $('ibar-x').textContent=(m==='prompt')?'Nanti':'Mengerti';
+    bar.hidden=false;document.body.classList.add('ib-on');
+  }
+  $('ibar-x').onclick=()=>tutup(true);
+  link.onclick=tampil;
+  $('ibar-go').onclick=()=>{
+    if(dp){
+      const p=dp;dp=null;
+      p.prompt();
+      p.userChoice.then(c=>{if(c.outcome==='accepted')put(INST,'1')}).catch(()=>{});
+      bar.hidden=true;document.body.classList.remove('ib-on');link.hidden=true;
+    }else tutup(true);
+  };
+
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault();dp=e;put(INST,'0');syncLink();
+    if(!skipped())setTimeout(()=>{if(dp)tampil()},800);
+  });
+  window.addEventListener('appinstalled',()=>{
+    dp=null;put(INST,'1');bar.hidden=true;document.body.classList.remove('ib-on');link.hidden=true;toast('Aplikasi terpasang ✓');
+  });
+
+  /* iPhone & browser Android tanpa dialog otomatis: tampilkan petunjuk */
+  syncLink();
+  setTimeout(()=>{
+    if(dp||skipped()||get(INST)==='1')return;
+    if(iOS||android)tampil();
+  },iOS?1400:3500);
+})();
 </script>
 </body>
 </html>
