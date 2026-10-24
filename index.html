@@ -36,12 +36,13 @@ html{
 body{
   margin:0;min-height:100vh;min-height:100dvh;color:var(--ink);overflow-x:hidden;
   font:15px/1.45 "Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;padding:0 16px calc(28px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;padding:0 16px calc(12px + env(safe-area-inset-bottom));
 }
 body.has-nav{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
 .wrap{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
 /* menu login & admin: kartu putih penuh sampai bawah, pas 1 layar */
-body:not(.has-nav) .wrap{min-height:calc(100vh - 28px - env(safe-area-inset-bottom));min-height:calc(100dvh - 28px - env(safe-area-inset-bottom))}
+.wrap:has(#login:not([hidden])),.wrap:has(#adm-login:not([hidden])){height:calc(100vh - 12px - env(safe-area-inset-bottom));height:calc(100dvh - 12px - env(safe-area-inset-bottom))}
+@media (max-height:600px){#login .illus{display:none}}
 @media (min-width:700px){.wrap{max-width:440px}}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes bob{50%{transform:translateY(-8px)}}
@@ -56,10 +57,10 @@ header p{margin:2px 0 0;font-size:10.5px;font-weight:600;color:var(--mute);lette
 .card h2{margin:0 0 4px;font-size:19px;font-weight:800;letter-spacing:-.015em}
 .card .sub{margin:0 0 12px;color:var(--mute);font-size:13px;line-height:1.4}
 
-#login,#adm-login{flex:1 1 auto;display:flex;flex-direction:column;padding:16px}
+#login,#adm-login{flex:1 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding:16px}
 #adm-login{justify-content:center}
 .illus{margin:0 0 10px;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,#e9edff 0%,#f3ecff 100%)}
-#login .illus{flex:1 1 auto;min-height:70px}
+#login .illus{flex:1 1 0;min-height:0}
 .illus svg{display:block;width:100%;height:100%}
 .float{animation:bob 5s ease-in-out infinite}.float.d2{animation-delay:-1.8s}.float.d3{animation-delay:-3.2s}
 
@@ -433,17 +434,28 @@ const CACHE_KEY='kasbon_nama_v1';
 
 /* ===== SUARA (Text-to-Speech) ===== */
 const TTS=('speechSynthesis' in window&&'SpeechSynthesisUtterance' in window);
-let teksSuara='';
+let teksSuara='',sudahBicara=false;
 function bicara(teks){
   if(!TTS||!teks)return;
   try{
     speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(teks);
-    u.lang='id-ID';u.rate=0.9;u.pitch=1;u.volume=1;
+    u.lang='id-ID';u.rate=0.9;u.pitch=1;u.volume=1;u.onstart=()=>{sudahBicara=true};
     const v=speechSynthesis.getVoices().find(x=>/^id([-_]|$)/i.test(x.lang));
     if(v)u.voice=v;
     speechSynthesis.speak(u);
   }catch(e){}
+}
+/* Saat halaman dimuat ulang: coba bicara sekarang; bila diblokir browser, ulangi di sentuhan pertama */
+function bicaraSesi(){
+  if(window.stopMusik)stopMusik();
+  sudahBicara=false;bicara(teksSuara);
+  const ev=['pointerdown','touchstart','keydown','click','scroll'];
+  const f=()=>{
+    if(sudahBicara||(TTS&&speechSynthesis.speaking)){sudahBicara=true;ev.forEach(x=>window.removeEventListener(x,f));return}
+    bicara(teksSuara);
+  };
+  ev.forEach(x=>window.addEventListener(x,f,{passive:true}));
 }
 function bukaIzinSuara(){
   if(!TTS)return;
@@ -473,7 +485,9 @@ function terbilang(n){
 (function(){
   const AC=window.AudioContext||window.webkitAudioContext;
   if(!AC)return;
+  try{if(sessionStorage.getItem('kasbon_sess_v1'))return}catch(e){}
   let ctx=null,mulai=false;
+  window.stopMusik=()=>{mulai=true;try{ctx&&ctx.close()}catch(e){}};
   const hz=m=>440*Math.pow(2,(m-69)/12);
   const CH=[[50,57,62,66],[45,57,61,64],[47,54,62,66],[42,54,61,64],[43,55,59,62],[50,57,62,66],[43,55,59,62],[45,57,61,64]];
   function nada(m,t,dur,vol,dest){
@@ -632,7 +646,7 @@ function show(o,silent){
   if(lunas)teksSuara='Hutang '+o.nama+' Lunas';
   else if(s>0)teksSuara='Hutang '+o.nama+' '+terbilang(s)+' rupiah';
   else teksSuara='Hutang '+o.nama+' Lunas, kelebihan pembayaran '+terbilang(s)+' rupiah';
-  if(!silent)bicara(teksSuara);
+  if(!silent){if(window.stopMusik)stopMusik();bicara(teksSuara)}
 }
 
 function done(){$('go').disabled=false;$('go').textContent=BTN}
@@ -874,6 +888,7 @@ function clearSess(){
   if(s&&s.data&&s.nama&&s.pin){
     CUR_NAMA=s.nama;CUR_PIN=s.pin;
     show(s.data,true);
+    bicaraSesi();
     fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'cekHutang',nama:s.nama,pin:s.pin})})
       .then(r=>r.json())
       .then(o=>{
