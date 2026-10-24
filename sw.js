@@ -1,5 +1,5 @@
 /* Service worker: aplikasi tetap bisa dibuka tanpa sinyal (data terakhir tampil dari cache aplikasi) */
-const VERSION = 'kasbon-v4';
+const VERSION = 'kasbon-v5';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
