@@ -238,11 +238,9 @@ body.has-nav .ibar{bottom:calc(96px + env(safe-area-inset-bottom))}
 .crop-act{display:flex;gap:10px;margin-top:14px}
 .crop-act button{flex:1;width:auto;height:48px;font-size:15px;border-radius:14px}
 
-/* keyboard terbuka: tata letak normal, tidak mengecil */
-body.kb .wrap:has(#login:not([hidden])),body.kb .wrap:has(#adm-login:not([hidden])){height:auto;min-height:var(--app-h,100vh)}
-body.kb #login,body.kb #adm-login{flex:1 0 auto;overflow:visible}
-body.kb #login .illus{display:block!important;flex:0 0 auto;height:112px;min-height:112px}
-body.kb #login{justify-content:flex-start}
+html{color-scheme:light}
+select option{background:#fff;color:#0f1a3d}
+.wrap{transition:transform .25s ease}
 </style>
 </head>
 <body>
@@ -431,20 +429,29 @@ body.kb #login{justify-content:flex-start}
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCE67xliISB3QhnNUvhZWIfW2tcGAJNlYBDCR3HMG4LpHufwcVoVNcxO9Mm3ZsHyp1rg/exec';
 
 /* tinggi layar nyata (stabil saat bilah alamat browser muncul/hilang atau halaman dimuat ulang) */
-let kbOn=false;
+let kbOn=false,geser=0;
 function setH(){if(kbOn)return;document.documentElement.style.setProperty('--app-h',window.innerHeight+'px')}
 setH();
 ['resize','orientationchange','pageshow','load'].forEach(e=>window.addEventListener(e,setH));
-/* saat keyboard HP terbuka: jangan ciutkan tampilan, biarkan halaman bisa digeser */
-const isIn=t=>t&&/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName);
-document.addEventListener('focusin',e=>{if(isIn(e.target)){kbOn=true;document.body.classList.add('kb')}});
+/* Tampilan login TIDAK berubah. Saat mengetik di kotak PIN/password, halaman hanya digeser ke atas agar kotak terlihat di atas keypad */
+const isTxt=t=>t&&t.tagName==='INPUT';
+function naik(){
+  const w=document.querySelector('.wrap'),vv=window.visualViewport,el=document.activeElement;
+  if(!vv||!isTxt(el)||el.type==='file'||el.type==='range')return;
+  const alami=el.getBoundingClientRect().bottom+geser;
+  const batas=vv.offsetTop+vv.height-72;           /* sisakan ruang untuk tombol di bawah kotak */
+  geser=Math.max(0,Math.round(alami-batas));
+  w.style.transform=geser?'translateY('+(-geser)+'px)':'';
+}
+document.addEventListener('focusin',e=>{if(isTxt(e.target)){kbOn=true;setTimeout(naik,120);setTimeout(naik,450)}});
 document.addEventListener('focusout',()=>{
   setTimeout(()=>{
-    if(isIn(document.activeElement))return;
-    kbOn=false;document.body.classList.remove('kb');
+    if(isTxt(document.activeElement))return;
+    kbOn=false;geser=0;document.querySelector('.wrap').style.transform='';
     setTimeout(setH,350);
   },150);
 });
+if(window.visualViewport)window.visualViewport.addEventListener('resize',()=>{if(kbOn)naik()});
 const $=id=>document.getElementById(id);
 const rp=n=>'Rp '+Math.abs(n).toLocaleString('id-ID');
 const num=n=>(n<0?'-':'')+Math.abs(Number(n)||0).toLocaleString('id-ID');
