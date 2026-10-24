@@ -41,7 +41,7 @@ body{
 body.has-nav{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
 .wrap{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
 /* menu login & admin: kartu putih penuh sampai bawah, pas 1 layar */
-.wrap:has(#login:not([hidden])),.wrap:has(#adm-login:not([hidden])){height:calc(100vh - 12px - env(safe-area-inset-bottom));height:calc(100dvh - 12px - env(safe-area-inset-bottom))}
+.wrap:has(#login:not([hidden])),.wrap:has(#adm-login:not([hidden])){height:calc(var(--app-h,100vh) - 12px - env(safe-area-inset-bottom))}
 @media (max-height:600px){#login .illus{display:none}}
 @media (min-width:700px){.wrap{max-width:440px}}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
@@ -424,6 +424,11 @@ body.has-nav .ibar{bottom:calc(96px + env(safe-area-inset-bottom))}
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCE67xliISB3QhnNUvhZWIfW2tcGAJNlYBDCR3HMG4LpHufwcVoVNcxO9Mm3ZsHyp1rg/exec';
 
+/* tinggi layar nyata (stabil saat bilah alamat browser muncul/hilang atau halaman dimuat ulang) */
+function setH(){document.documentElement.style.setProperty('--app-h',(window.visualViewport?window.visualViewport.height:window.innerHeight)+'px')}
+setH();
+['resize','orientationchange','pageshow','load'].forEach(e=>window.addEventListener(e,setH));
+if(window.visualViewport)window.visualViewport.addEventListener('resize',setH);
 const $=id=>document.getElementById(id);
 const rp=n=>'Rp '+Math.abs(n).toLocaleString('id-ID');
 const num=n=>(n<0?'-':'')+Math.abs(Number(n)||0).toLocaleString('id-ID');
