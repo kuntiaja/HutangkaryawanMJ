@@ -237,6 +237,12 @@ body.has-nav .ibar{bottom:calc(96px + env(safe-area-inset-bottom))}
 .rb{flex:1;width:auto;height:40px;padding:0 12px;border-radius:12px;font-size:13.5px;background:var(--soft);color:var(--ink-2);border:1px solid var(--line);box-shadow:none}
 .crop-act{display:flex;gap:10px;margin-top:14px}
 .crop-act button{flex:1;width:auto;height:48px;font-size:15px;border-radius:14px}
+
+/* keyboard terbuka: tata letak normal, tidak mengecil */
+body.kb .wrap:has(#login:not([hidden])),body.kb .wrap:has(#adm-login:not([hidden])){height:auto;min-height:var(--app-h,100vh)}
+body.kb #login,body.kb #adm-login{flex:1 0 auto;overflow:visible}
+body.kb #login .illus{display:none}
+body.kb #login{justify-content:flex-start}
 </style>
 </head>
 <body>
@@ -425,10 +431,20 @@ body.has-nav .ibar{bottom:calc(96px + env(safe-area-inset-bottom))}
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCE67xliISB3QhnNUvhZWIfW2tcGAJNlYBDCR3HMG4LpHufwcVoVNcxO9Mm3ZsHyp1rg/exec';
 
 /* tinggi layar nyata (stabil saat bilah alamat browser muncul/hilang atau halaman dimuat ulang) */
-function setH(){document.documentElement.style.setProperty('--app-h',(window.visualViewport?window.visualViewport.height:window.innerHeight)+'px')}
+let kbOn=false;
+function setH(){if(kbOn)return;document.documentElement.style.setProperty('--app-h',window.innerHeight+'px')}
 setH();
 ['resize','orientationchange','pageshow','load'].forEach(e=>window.addEventListener(e,setH));
-if(window.visualViewport)window.visualViewport.addEventListener('resize',setH);
+/* saat keyboard HP terbuka: jangan ciutkan tampilan, biarkan halaman bisa digeser */
+const isIn=t=>t&&/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName);
+document.addEventListener('focusin',e=>{if(isIn(e.target)){kbOn=true;document.body.classList.add('kb')}});
+document.addEventListener('focusout',()=>{
+  setTimeout(()=>{
+    if(isIn(document.activeElement))return;
+    kbOn=false;document.body.classList.remove('kb');
+    setTimeout(setH,350);
+  },150);
+});
 const $=id=>document.getElementById(id);
 const rp=n=>'Rp '+Math.abs(n).toLocaleString('id-ID');
 const num=n=>(n<0?'-':'')+Math.abs(Number(n)||0).toLocaleString('id-ID');
