@@ -267,6 +267,15 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
 #adm>.card.stat,#adm>.tabs,#adm>button{flex:none}
 #adm>.card:not(.stat){flex:1 1 0;min-height:0;display:flex;flex-direction:column}
 #adm .list{max-height:none;flex:1 1 0;min-height:0}
+
+/* Admin: klik nama karyawan -> riwayat transaksi */
+.item.klik{cursor:pointer;border-radius:12px}
+.item.klik:active{background:var(--soft)}
+.item.klik .t::after{content:" ›";color:var(--primary);font-weight:800}
+.hbox{max-width:440px;padding:16px 8px 14px}
+.hbox h3,.hbox>p{padding:0 10px}
+.hbox .tw{max-height:58vh;overflow-y:auto}
+.hbox .crop-act{padding:0 10px}
 </style>
 </head>
 <body>
@@ -399,6 +408,16 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
   <span class="nt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>Data bersifat pribadi, jangan bagikan PIN Anda.</span>
   <button type="button" class="linkbtn" id="inst-link" hidden>📲 Pasang aplikasi di HP</button>
 </p>
+</div>
+
+<!-- ADMIN: RIWAYAT SATU KARYAWAN -->
+<div class="pmod" id="hmod" hidden>
+  <div class="pbox hbox" role="dialog" aria-label="Riwayat karyawan">
+    <h3 id="h-nm"></h3>
+    <p id="h-sub"></p>
+    <div id="h-rows"></div>
+    <div class="crop-act"><button type="button" id="h-x">Tutup</button></div>
+  </div>
 </div>
 
 <div class="pmod" id="pmod" hidden>
@@ -814,7 +833,7 @@ function showAdm(o){
   $('a-total').textContent=(o.totalSisa<0?'-':'')+rp(o.totalSisa||0);
   $('a-rekap').innerHTML=L.length
     ?L.slice().sort((a,b)=>b.sisa-a.sisa).map((r,i)=>
-      `<div class="item">${avH(r,i)}<div class="l"><div class="t">${esc(r.nama)}</div><div class="s">Bon ${num(r.bon)} · Bayar ${num(r.bayar)}</div></div><div class="rt ${r.sisa>0?'neg':'ok'}">${r.sisa===0?'Lunas':num(r.sisa)}</div></div>`).join('')
+      `<div class="item klik" data-nama="${esc(r.nama)}">${avH(r,i)}<div class="l"><div class="t">${esc(r.nama)}</div><div class="s">Bon ${num(r.bon)} · Bayar ${num(r.bayar)}</div></div><div class="rt ${r.sisa>0?'neg':'ok'}">${r.sisa===0?'Lunas':num(r.sisa)}</div></div>`).join('')
     :'<div class="empty">Belum ada karyawan.</div>';
   $('a-pin').innerHTML=L.length
     ?L.map((r,i)=>
@@ -837,6 +856,44 @@ $('adm-go').onclick=()=>{
     .catch(()=>{$('adm-go').disabled=false;$('adm-go').textContent='Masuk';err.textContent='Terjadi kesalahan jaringan.'});
 };
 $('apass').addEventListener('keydown',e=>{if(e.key==='Enter')$('adm-go').click()});
+
+/* ===== ADMIN: riwayat transaksi satu karyawan ===== */
+(function(){
+  const hm=$('hmod');
+  function tutup(){hm.hidden=true;$('h-rows').innerHTML=''}
+  $('h-x').onclick=tutup;
+  hm.addEventListener('click',e=>{if(e.target===hm)tutup()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!hm.hidden)tutup()});
+
+  function tampil(o){
+    const R=(o.rows||[]).map(r=>{
+      const bon=Number(r[2])||0,bayar=Number(r[3])||0;
+      return {tgl:r[0],ket:r[1],bon:bon,bayar:bayar,isBon:bon>0,saldo:Number(r[4])||0};
+    }).reverse();
+    const s=R.length?R[0].saldo:0;
+    $('h-nm').textContent=o.nama;
+    $('h-sub').textContent=(o.jabatan||'-')+' · Sisa: '+(s===0?'Lunas':rp(s))+' · '+R.length+' transaksi';
+    if(!R.length){$('h-rows').innerHTML='<div class="empty">Belum ada catatan.</div>';return}
+    let h='<div class="tw"><table class="lg"><thead><tr><th>Tgl</th><th>Keterangan</th><th class="r">Bon</th><th class="r">Bayar</th><th class="r">Sisa</th></tr></thead><tbody>';
+    R.forEach(x=>{
+      h+=`<tr><td class="d">${esc(tglT(x.tgl))}</td><td class="k">${esc(x.ket||(x.isBon?'Kas Bon':'Pembayaran'))}</td><td class="r neg">${x.bon>0?num(x.bon):''}</td><td class="r pos">${x.bayar>0?num(x.bayar):''}</td><td class="r s">${x.saldo===0?'Lunas':num(x.saldo)}</td></tr>`;
+    });
+    $('h-rows').innerHTML=h+'</tbody></table></div><p class="cap">Nominal dalam Rupiah</p>';
+  }
+
+  $('a-rekap').addEventListener('click',e=>{
+    const it=e.target.closest('.item[data-nama]');if(!it)return;
+    let p='';try{p=sessionStorage.getItem(ADM_KEY)||''}catch(x){}
+    if(!p){toast('Sesi admin habis, silakan masuk lagi.');return}
+    $('h-nm').textContent=it.dataset.nama;$('h-sub').textContent='';
+    $('h-rows').innerHTML='<div class="empty">Memuat riwayat…</div>';
+    hm.hidden=false;
+    fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'adminRiwayat',pass:p,nama:it.dataset.nama})})
+      .then(r=>r.json())
+      .then(o=>{if(o.ok)tampil(o);else{tutup();toast(o.msg||'Gagal memuat riwayat.')}})
+      .catch(()=>{tutup();toast('Terjadi kesalahan jaringan.')});
+  });
+})();
 
 /* ===== FOTO PROFIL ===== */
 let CUR_NAMA='',CUR_PIN='',CUR_FOTO='',LAST_O=null,UPLOADING=false,toastT;
