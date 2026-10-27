@@ -305,6 +305,7 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
 .nota-img{display:block;width:100%;max-height:50vh;object-fit:contain;border-radius:12px;border:1px solid var(--line);background:#f2f4fb;margin:0 0 12px;min-height:120px}
 .nota-act{display:flex;gap:8px;margin-top:8px}
 .nota-act button{flex:1;width:auto;height:44px;font-size:13.5px;border-radius:13px}
+button.ghost.danger{color:var(--red);border-color:#ffd3d0;margin-top:8px;background:#fff8f7}
 #kb-new{position:sticky;top:0;z-index:2;margin:8px 0 6px;height:44px;font-size:14px}
 #kbmod input[type=date]{min-height:46px}
 
@@ -502,6 +503,7 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
     <button type="button" id="nv-ok" hidden>✓ Setuju &amp; Terima Kas Bon</button>
     <div class="nota-act"><button type="button" class="ghost" id="nv-png">Simpan Gambar</button><button type="button" class="ghost" id="nv-pdf">Simpan PDF</button></div>
     <div class="nota-act"><button type="button" class="ghost" id="nv-share" hidden>Bagikan</button><button type="button" class="ghost" id="nv-x">Tutup</button></div>
+    <button type="button" class="ghost danger" id="nv-del" hidden>Hapus Kas Bon</button>
   </div>
 </div>
 
@@ -1315,6 +1317,7 @@ async function bukaNota(it,peran){
   const ok=it.status==='Disetujui';
   $('nv-s').textContent=ok?'Disetujui karyawan pada '+wktPanjang(it.disetujui)+'.':(peran==='karyawan'?'Periksa rinciannya. Tekan Setuju jika jumlah ini sesuai dengan yang Anda terima.':'Menunggu persetujuan karyawan.');
   $('nv-ok').hidden=!(peran==='karyawan'&&!ok);
+  $('nv-del').hidden=peran!=='admin';
   $('nv-share').hidden=!navigator.share;
   $('nv-img').removeAttribute('src');
   $('nvmod').hidden=false;
@@ -1399,6 +1402,22 @@ $('nv-ok').onclick=()=>{
     })
     .catch(()=>toast('Terjadi kesalahan jaringan.'))
     .then(()=>{busyKb=false;$('nv-ok').disabled=false;$('nv-ok').textContent='✓ Setuju & Terima Kas Bon'});
+};
+$('nv-del').onclick=()=>{
+  const it=NOTA_CUR;if(!it||NOTA_ROLE!=='admin'||busyKb)return;
+  const catatan=it.status==='Disetujui'?'\n\nKas bon ini SUDAH disetujui karyawan.':'';
+  if(!confirm('Hapus kas bon '+it.id+'?\n'+it.nama+' · '+rpf(it.jumlah)+catatan+'\n\nHutang karyawan akan berkurang sebesar jumlah ini.'))return;
+  busyKb=true;$('nv-del').disabled=true;$('nv-del').textContent='Menghapus…';
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'adminKasBonHapus',pass:admPass(),id:it.id})})
+    .then(r=>r.json())
+    .then(o=>{
+      if(o.ok){
+        KB_ADM=KB_ADM.filter(x=>x.id!==it.id);renderKbAdm();
+        $('nvmod').hidden=true;toast('Kas bon dihapus');refreshAdm();
+      }else toast(o.msg||'Gagal menghapus kas bon.');
+    })
+    .catch(()=>toast('Terjadi kesalahan jaringan.'))
+    .then(()=>{busyKb=false;$('nv-del').disabled=false;$('nv-del').textContent='Hapus Kas Bon'});
 };
 setInterval(()=>{if(!document.hidden&&!$('out').hidden)muatNotif()},120000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('out').hidden)muatNotif()});
