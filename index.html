@@ -307,6 +307,12 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
 .nota-act button{flex:1;width:auto;height:44px;font-size:13.5px;border-radius:13px}
 #kb-new{position:sticky;top:0;z-index:2;margin:8px 0 6px;height:44px;font-size:14px}
 #kbmod input[type=date]{min-height:46px}
+
+.nav .in{gap:2px;padding:6px}
+.nav button{position:relative;font-size:10.5px;white-space:nowrap}
+.nav button#n-td{flex:1.35}
+.nav .dot{position:absolute;top:3px;left:calc(50% + 4px);min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--red);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;border:2px solid #fff;line-height:1}
+.tdlist{max-height:56vh;overflow-y:auto;margin:0 -4px 12px;padding:0 4px}
 </style>
 </head>
 <body>
@@ -427,11 +433,6 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
   <div class="tile"><div class="ti t-pu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M9 15l2 2 4-4"/></svg></div><b id="m-bayar">-</b><span>Bayar terakhir</span></div>
 </div>
 
-<div class="card kbl" id="kbcard" hidden>
-  <div class="card-head"><div><h3>Nota Kas Bon</h3><p>Tanda terima dari admin</p></div><span class="badge" id="kb-cnt"></span></div>
-  <div id="kb-list"></div>
-</div>
-
 <div class="card hist" id="histcard">
   <div class="card-head">
     <div><h3>Riwayat Transaksi</h3><p>Sejak <span id="m-awal">-</span></p></div>
@@ -479,6 +480,16 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
     <input id="kbn-tgl" type="date">
     <p id="kbn-err" role="alert"></p>
     <div class="crop-act"><button type="button" class="ghost" id="kbn-no">Batal</button><button type="button" id="kbn-ok">Buat &amp; Kirim</button></div>
+  </div>
+</div>
+
+<!-- DAFTAR TANDA TERIMA (karyawan) -->
+<div class="pmod" id="tdmod" hidden>
+  <div class="pbox" role="dialog" aria-label="Tanda terima">
+    <h3>Tanda Terima</h3>
+    <p>Nota kas bon dari admin. Ketuk untuk melihat, setuju, atau menyimpan sebagai gambar &amp; PDF.</p>
+    <div class="tdlist" id="td-list"></div>
+    <div class="crop-act"><button type="button" id="td-x">Tutup</button></div>
   </div>
 </div>
 
@@ -556,6 +567,7 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
   <div class="in">
     <button type="button" id="n-home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Ringkasan</button>
     <button type="button" id="n-hist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg>Riwayat</button>
+    <button type="button" id="n-td" aria-label="Tanda Terima"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Tanda Terima<span class="dot" id="td-dot" hidden></span></button>
     <button type="button" id="n-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M16 7l3 3M14 9l2 2"/></svg>Ganti PIN</button>
     <button type="button" id="out-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Keluar</button>
   </div>
@@ -1333,10 +1345,10 @@ function renderKb(){
   const n=KB_ITEMS.filter(x=>x.status!=='Disetujui').length;
   $('kbbanner').hidden=!n;
   if(n)$('kbb-t').textContent=n+' kas bon menunggu persetujuan Anda';
-  $('kbcard').hidden=!KB_ITEMS.length;
-  $('kb-cnt').textContent=KB_ITEMS.length+' nota';
-  $('kb-list').innerHTML=KB_ITEMS.slice(0,8).map(it=>
-    `<div class="kbi" data-id="${esc(it.id)}"><div class="kic">${SVG_NOTA}</div><div class="m"><b>${esc(it.ket||'Kas Bon')}</b><span>${esc(tgl(it.tgl))} · ${esc(it.id)}</span></div><div class="r"><b>${rpf(it.jumlah)}</b>${chipSt(it)}</div></div>`).join('');
+  $('td-dot').hidden=!n;$('td-dot').textContent=n;
+  $('td-list').innerHTML=KB_ITEMS.length
+    ?KB_ITEMS.map(it=>`<div class="kbi" data-id="${esc(it.id)}"><div class="kic">${SVG_NOTA}</div><div class="m"><b>${esc(it.ket||'Kas Bon')}</b><span>${esc(tgl(it.tgl))} · ${esc(it.id)}</span></div><div class="r"><b>${rpf(it.jumlah)}</b>${chipSt(it)}</div></div>`).join('')
+    :'<div class="empty">Belum ada tanda terima kas bon.</div>';
 }
 function segarkan(){
   if(!CUR_NAMA||!CUR_PIN)return;
@@ -1362,12 +1374,15 @@ function muatNotif(){
 }
 function resetKb(){
   KB_ITEMS=[];KB_KNOWN=null;kbPopped={};
-  $('kbbanner').hidden=true;$('kbcard').hidden=true;$('nvmod').hidden=true;
+  $('kbbanner').hidden=true;$('td-dot').hidden=true;$('tdmod').hidden=true;$('nvmod').hidden=true;
 }
-$('kb-list').addEventListener('click',e=>{
+$('td-list').addEventListener('click',e=>{
   const r=e.target.closest('.kbi');if(!r)return;
   const it=KB_ITEMS.find(x=>x.id===r.dataset.id);if(it)bukaNota(it,'karyawan');
 });
+$('n-td').onclick=()=>{renderKb();$('tdmod').hidden=false};
+$('td-x').onclick=()=>{$('tdmod').hidden=true};
+$('tdmod').addEventListener('click',e=>{if(e.target===$('tdmod'))$('tdmod').hidden=true});
 $('kbbanner').addEventListener('click',()=>{
   const w=KB_ITEMS.find(x=>x.status!=='Disetujui');if(w)bukaNota(w,'karyawan');
 });
