@@ -276,6 +276,37 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
 .hbox h3,.hbox>p{padding:0 10px}
 .hbox .tw{max-height:58vh;overflow-y:auto}
 .hbox .crop-act{padding:0 10px}
+
+/* Kas bon: notifikasi, daftar nota, penampil nota, menu admin */
+.nsheet{z-index:95}
+.pbox>p#perr,.pbox>p#kbn-err{color:var(--red);font-weight:600;text-align:center;min-height:16px;margin:0 0 4px}
+.tabs button{font-size:13px}
+.kbn{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:20px;background:linear-gradient(135deg,#fff4e5,#ffe8ef);border:1px solid #ffd9b8;box-shadow:var(--shadow);cursor:pointer}
+.kbn .bell{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--orange);color:#fff}
+.kbn .bell svg{width:22px;height:22px}
+.kbn b{display:block;font-size:14px}
+.kbn span{display:block;font-size:12px;color:var(--ink-2);font-weight:600;line-height:1.3}
+.kbn button{flex:none;width:auto;height:38px;padding:0 14px;font-size:13px;border-radius:12px}
+.kbl{padding:14px 12px 8px}
+.kbi{display:flex;align-items:center;gap:12px;padding:11px 4px;border-top:1px solid var(--line);cursor:pointer}
+.kbi:first-child{border-top:0}
+.kbi:active{background:var(--soft)}
+.kic{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--orange-bg);color:var(--orange)}
+.kic svg{width:20px;height:20px}
+.kbi .m{flex:1;min-width:0}
+.kbi .m b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kbi .m span{display:block;font-size:12px;color:var(--mute);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kbi .r{flex:none;text-align:right}
+.kbi .r b{display:block;font-size:14px;color:var(--red);font-variant-numeric:tabular-nums}
+.st{display:inline-block;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:999px;margin-top:3px}
+.st.w{background:var(--orange-bg);color:var(--orange)}
+.st.s{background:#e6f7ee;color:#12804a}
+.nota-box{max-width:420px}
+.nota-img{display:block;width:100%;max-height:50vh;object-fit:contain;border-radius:12px;border:1px solid var(--line);background:#f2f4fb;margin:0 0 12px;min-height:120px}
+.nota-act{display:flex;gap:8px;margin-top:8px}
+.nota-act button{flex:1;width:auto;height:44px;font-size:13.5px;border-radius:13px}
+#kb-new{position:sticky;top:0;z-index:2;margin:8px 0 6px;height:44px;font-size:14px}
+#kbmod input[type=date]{min-height:46px}
 </style>
 </head>
 <body>
@@ -345,10 +376,11 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
 <!-- PANEL ADMIN -->
 <section id="adm" hidden>
 <div class="card stat"><div class="who">Total sisa kas bon semua karyawan</div><div class="big" id="a-total"></div></div>
-<div class="tabs"><button id="t-rekap" class="on" type="button">Rekap</button><button id="t-pin" type="button">Nama &amp; PIN</button></div>
+<div class="tabs"><button id="t-rekap" class="on" type="button">Rekap</button><button id="t-pin" type="button">Nama &amp; PIN</button><button id="t-kb" type="button">Kas Bon</button></div>
 <div class="card" style="padding:8px 16px">
 <div class="list" id="v-rekap"><div id="a-rekap"></div></div>
 <div class="list" id="v-pin" hidden><div id="a-pin"></div></div>
+<div class="list" id="v-kb" hidden><button type="button" id="kb-new">＋ Buat Kas Bon Baru</button><div id="a-kb"></div></div>
 </div>
 <button class="ghost" id="adm-out" type="button">Keluar Admin</button>
 </section>
@@ -362,6 +394,12 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
   </div>
   <div class="hi"><span>Halo 👋</span><b id="nm"></b></div>
   <span id="jab"></span>
+</div>
+
+<div class="kbn" id="kbbanner" hidden>
+  <div class="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>
+  <div style="flex:1;min-width:0"><b>Kas bon baru</b><span id="kbb-t"></span></div>
+  <button type="button" id="kbb-go">Periksa</button>
 </div>
 
 <div class="card hero" id="hero">
@@ -387,6 +425,11 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
   <div class="tile"><div class="ti t-bl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg></div><b id="tp"></b><span>Total Dibayar</span></div>
   <div class="tile"><div class="ti t-pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div><b id="m-bon">-</b><span>Bon terakhir</span></div>
   <div class="tile"><div class="ti t-pu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M9 15l2 2 4-4"/></svg></div><b id="m-bayar">-</b><span>Bayar terakhir</span></div>
+</div>
+
+<div class="card kbl" id="kbcard" hidden>
+  <div class="card-head"><div><h3>Nota Kas Bon</h3><p>Tanda terima dari admin</p></div><span class="badge" id="kb-cnt"></span></div>
+  <div id="kb-list"></div>
 </div>
 
 <div class="card hist" id="histcard">
@@ -420,6 +463,37 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
   </div>
 </div>
 
+<!-- ADMIN: BUAT KAS BON -->
+<div class="pmod" id="kbmod" hidden>
+  <div class="pbox" role="dialog" aria-label="Buat kas bon">
+    <h3>Buat Kas Bon</h3>
+    <p>Karyawan akan menerima pemberitahuan dan menyetujuinya sebagai tanda terima.</p>
+    <label for="kbn-nama-btn">Karyawan</label>
+    <button type="button" class="sel" id="kbn-nama-btn" aria-haspopup="listbox"><span id="kbn-txt">— pilih karyawan —</span></button>
+    <select id="kbn-nama" hidden tabindex="-1" aria-hidden="true"><option value="">— pilih karyawan —</option></select>
+    <label for="kbn-jml">Jumlah (Rp)</label>
+    <input id="kbn-jml" type="text" inputmode="numeric" autocomplete="off" placeholder="0">
+    <label for="kbn-ket">Keterangan</label>
+    <input id="kbn-ket" type="text" maxlength="80" autocomplete="off" placeholder="Contoh: Kas bon keperluan keluarga">
+    <label for="kbn-tgl">Tanggal</label>
+    <input id="kbn-tgl" type="date">
+    <p id="kbn-err" role="alert"></p>
+    <div class="crop-act"><button type="button" class="ghost" id="kbn-no">Batal</button><button type="button" id="kbn-ok">Buat &amp; Kirim</button></div>
+  </div>
+</div>
+
+<!-- NOTA / TANDA TERIMA (admin & karyawan) -->
+<div class="pmod" id="nvmod" hidden>
+  <div class="pbox nota-box" role="dialog" aria-label="Tanda terima kas bon">
+    <h3>Tanda Terima Kas Bon</h3>
+    <p id="nv-s"></p>
+    <img id="nv-img" class="nota-img" alt="Tanda terima kas bon">
+    <button type="button" id="nv-ok" hidden>✓ Setuju &amp; Terima Kas Bon</button>
+    <div class="nota-act"><button type="button" class="ghost" id="nv-png">Simpan Gambar</button><button type="button" class="ghost" id="nv-pdf">Simpan PDF</button></div>
+    <div class="nota-act"><button type="button" class="ghost" id="nv-share" hidden>Bagikan</button><button type="button" class="ghost" id="nv-x">Tutup</button></div>
+  </div>
+</div>
+
 <div class="pmod" id="pmod" hidden>
   <div class="pbox" role="dialog" aria-label="Ganti PIN">
     <h3>Ganti PIN</h3>
@@ -434,7 +508,7 @@ body:has(#login:not([hidden])),body:has(#adm-login:not([hidden])),body:has(#adm:
     <div class="crop-act"><button type="button" class="ghost" id="p-no">Batal</button><button type="button" id="p-ok">Simpan PIN</button></div>
   </div>
 </div>
-<div class="nsheet" id="nsheet" hidden><div class="nbox" role="listbox"><div class="nh">Pilih nama Anda</div><div class="nlist" id="nlist"></div></div></div>
+<div class="nsheet" id="nsheet" hidden><div class="nbox" role="listbox"><div class="nh" id="nh">Pilih nama Anda</div><div class="nlist" id="nlist"></div></div></div>
 <input type="file" id="finp" accept="image/*" hidden>
 <div class="toast" id="toast" role="status" hidden></div>
 <div class="lb" id="lb" hidden>
@@ -496,7 +570,7 @@ function setH(){if(kbOn)return;baseH=window.innerHeight;document.documentElement
 setH();
 ['resize','orientationchange','pageshow','load'].forEach(e=>window.addEventListener(e,setH));
 /* Tampilan login TIDAK berubah. Saat mengetik di kotak PIN/password, halaman hanya digeser ke atas agar kotak terlihat di atas keypad */
-const isTxt=t=>t&&t.tagName==='INPUT'&&!t.closest('#pmod');
+const isTxt=t=>t&&t.tagName==='INPUT'&&!t.closest('.pmod');
 function naik(){
   const w=document.querySelector('.wrap'),vv=window.visualViewport,el=document.activeElement;
   if(!vv||!isTxt(el)||el.type==='file'||el.type==='range')return;
@@ -647,27 +721,28 @@ function terbilang(n){
     window.addEventListener(ev,function f(){coba();if(mulai)window.removeEventListener(ev,f)},{passive:true}));
 })();
 
-/* ===== PILIHAN NAMA (kustom, latar putih) ===== */
+/* ===== PILIHAN NAMA (kustom, latar putih) - dipakai di login & form kas bon admin ===== */
 (function(){
-  const sel=$('nama'),btn=$('nama-btn'),txt=$('nama-txt'),sh=$('nsheet'),ls=$('nlist');
-  function sync(){
-    const o=sel.options[sel.selectedIndex];
-    txt.textContent=o?o.text:'';
-    ls.innerHTML=[...sel.options].filter(x=>x.value).map(x=>`<button type="button" class="ni${x.value===sel.value?' on':''}" data-v="${esc(x.value)}">${esc(x.text)}</button>`).join('');
-  }
-  new MutationObserver(sync).observe(sel,{childList:true});
-  sel.addEventListener('change',sync);
-  btn.onclick=()=>{
-    if(sel.options.length<2)return;
-    sh.hidden=false;
-    const on=ls.querySelector('.on');if(on)on.scrollIntoView({block:'center'});
-  };
+  const sh=$('nsheet'),ls=$('nlist');let cur=null;
+  [['nama','nama-txt','Pilih nama Anda'],['kbn-nama','kbn-txt','Pilih karyawan']].forEach(([sid,tid,judul])=>{
+    const sel=$(sid),txt=$(tid),btn=$(sid+'-btn');
+    const sync=()=>{const o=sel.options[sel.selectedIndex];txt.textContent=o?o.text:''};
+    new MutationObserver(sync).observe(sel,{childList:true});
+    sel.addEventListener('change',sync);
+    btn.onclick=()=>{
+      if(sel.options.length<2)return;
+      cur=sel;$('nh').textContent=judul;
+      ls.innerHTML=[...sel.options].filter(x=>x.value).map(x=>`<button type="button" class="ni${x.value===sel.value?' on':''}" data-v="${esc(x.value)}">${esc(x.text)}</button>`).join('');
+      sh.hidden=false;
+      const on=ls.querySelector('.on');if(on)on.scrollIntoView({block:'center'});
+    };
+    sync();
+  });
   sh.onclick=e=>{if(e.target===sh)sh.hidden=true};
   ls.addEventListener('click',e=>{
-    const b=e.target.closest('.ni');if(!b)return;
-    sel.value=b.dataset.v;sel.dispatchEvent(new Event('change'));sh.hidden=true;
+    const b=e.target.closest('.ni');if(!b||!cur)return;
+    cur.value=b.dataset.v;cur.dispatchEvent(new Event('change'));sh.hidden=true;
   });
-  sync();
 })();
 
 /* ===== DAFTAR NAMA ===== */
@@ -800,11 +875,12 @@ $('go').onclick=()=>{
   bukaIzinSuara();
   fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'cekHutang',nama:n,pin:pin})})
     .then(res=>res.json())
-    .then(o=>{done();if(o.ok){saveSess(n,pin,o);show(o)}else{err.textContent=o.msg}})
+    .then(o=>{done();if(o.ok){saveSess(n,pin,o);show(o);muatNotif()}else{err.textContent=o.msg}})
     .catch(()=>{done();err.textContent='Terjadi kesalahan jaringan.'});
 };
 $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click()});
 $('out-btn').onclick=()=>{
+  resetKb();
   clearSess();
   if(TTS){try{speechSynthesis.cancel()}catch(e){}}
   DATA=[];
@@ -818,18 +894,16 @@ $('out-btn').onclick=()=>{
 /* ===== ADMIN ===== */
 const avc=(r,i)=>'av sm'+(i%5?' c'+(i%5):'');
 function tab(t){
-  $('t-rekap').classList.toggle('on',t==='rekap');
-  $('t-pin').classList.toggle('on',t==='pin');
-  $('v-rekap').hidden=t!=='rekap';
-  $('v-pin').hidden=t!=='pin';
+  ['rekap','pin','kb'].forEach(k=>{$('t-'+k).classList.toggle('on',t===k);$('v-'+k).hidden=t!==k});
 }
 $('t-rekap').onclick=()=>tab('rekap');
 $('t-pin').onclick=()=>tab('pin');
+$('t-kb').onclick=()=>{tab('kb');muatKbAdmin()};
 $('adm-btn').onclick=()=>{$('err').textContent='';$('login').hidden=true;$('adm-login').hidden=false;$('apass').focus()};
 $('adm-back').onclick=()=>{$('adm-login').hidden=true;$('login').hidden=false;$('apass').value='';$('aerr').textContent=''};
 
-function showAdm(o){
-  const L=o.rows||[];
+function showAdm(o,keep){
+  const L=o.rows||[];ADM_ROWS=L;
   $('a-total').textContent=(o.totalSisa<0?'-':'')+rp(o.totalSisa||0);
   $('a-rekap').innerHTML=L.length
     ?L.slice().sort((a,b)=>b.sisa-a.sisa).map((r,i)=>
@@ -839,9 +913,9 @@ function showAdm(o){
     ?L.map((r,i)=>
       `<div class="item">${avH(r,i)}<div class="l"><div class="t">${esc(r.nama)}</div><div class="s">${esc(r.jabatan)}</div></div><div class="pinbox">${r.pin?esc(r.pin):'-'}</div></div>`).join('')
     :'<div class="empty">Belum ada karyawan.</div>';
-  tab('rekap');
+  if(!keep)tab('rekap');
   $('adm-login').hidden=true;$('boot').hidden=true;$('adm').hidden=false;
-  window.scrollTo(0,0);
+  if(!keep)window.scrollTo(0,0);
 }
 $('adm-go').onclick=()=>{
   const p=$('apass').value,err=$('aerr');err.textContent='';
@@ -897,6 +971,7 @@ $('apass').addEventListener('keydown',e=>{if(e.key==='Enter')$('adm-go').click()
 
 /* ===== FOTO PROFIL ===== */
 let CUR_NAMA='',CUR_PIN='',CUR_FOTO='',LAST_O=null,UPLOADING=false,toastT;
+let KB_ITEMS=[],KB_ADM=[],ADM_ROWS=[],KB_KNOWN=null,kbPopped={},NOTA_CUR=null,NOTA_ROLE='',NOTA_CANVAS=null,busyKb=false;
 function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true},3000)}
 function safeImg(u){return /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(u||'')?u:''}
 function avH(r,i,attr){
@@ -1068,6 +1143,7 @@ function clearSess(){
     CUR_NAMA=s.nama;CUR_PIN=s.pin;
     show(s.data,true);
     bicaraSesi();
+    muatNotif();
     fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'cekHutang',nama:s.nama,pin:s.pin})})
       .then(r=>r.json())
       .then(o=>{
@@ -1086,9 +1162,288 @@ function clearSess(){
   }
 })();
 $('adm-out').onclick=()=>{
+  KB_ADM=[];$('a-kb').innerHTML='';
   clearSess();
   $('adm').hidden=true;$('login').hidden=false;
   $('a-rekap').innerHTML='';$('a-pin').innerHTML='';$('a-total').textContent='';$('apass').value='';
+};
+
+/* ===== KAS BON: notifikasi, nota (gambar & PDF) & menu admin ===== */
+const rpf=n=>'Rp '+Math.abs(Number(n)||0).toLocaleString('id-ID');
+const tglPanjang=s=>new Date(s+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+const wktPanjang=s=>{if(!s)return '';const p=String(s).split(' ');return tglPanjang(p[0])+(p[1]?' pukul '+p[1]:'')};
+const SVG_NOTA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>';
+const chipSt=it=>it.status==='Disetujui'?'<span class="st s">Disetujui</span>':'<span class="st w">Menunggu</span>';
+const admPass=()=>{try{return sessionStorage.getItem(ADM_KEY)||''}catch(e){return ''}};
+
+function ding(){
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  try{
+    const c=new AC(),t=c.currentTime;
+    [[880,0],[1318,.16]].forEach(([f,d])=>{
+      const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.25,t+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d+.5);
+      o.connect(g);g.connect(c.destination);o.start(t+d);o.stop(t+d+.55);
+    });
+    setTimeout(()=>{try{c.close()}catch(e){}},1500);
+  }catch(e){}
+}
+
+/* ---- gambar nota (canvas) ---- */
+function bungkus(g,teks,maks){
+  const w=String(teks||'').split(/\s+/),out=[];let b='';
+  w.forEach(k=>{const t=b?b+' '+k:k;if(g.measureText(t).width>maks&&b){out.push(b);b=k}else b=t});
+  if(b)out.push(b);return out;
+}
+function rrect(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+async function buatNota(it){
+  try{await Promise.all(['800','700','600'].map(w=>document.fonts.load(w+' 24px "Plus Jakarta Sans"')))}catch(e){}
+  const W=800,H=1400,c=document.createElement('canvas');c.width=W;c.height=H;
+  const g=c.getContext('2d'),F='"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif';
+  const ok=it.status==='Disetujui';
+  g.fillStyle='#f2f4fb';g.fillRect(0,0,W,H);
+  rrect(g,24,24,W-48,H-48,36);g.fillStyle='#fff';g.fill();
+  g.save();rrect(g,24,24,W-48,H-48,36);g.clip();
+  const gr=g.createLinearGradient(0,0,W,280);gr.addColorStop(0,'#3d5afe');gr.addColorStop(1,'#101a3d');
+  g.fillStyle=gr;g.fillRect(24,24,W-48,240);
+  g.fillStyle='rgba(255,255,255,.09)';g.beginPath();g.arc(700,40,150,0,Math.PI*2);g.fill();
+  g.restore();
+  g.textBaseline='alphabetic';
+  g.fillStyle='#fff';g.font='800 36px '+F;g.fillText('MERDEKA JAYA',64,96);
+  g.fillStyle='rgba(255,255,255,.78)';g.font='600 20px '+F;g.fillText('CEK KAS BON KARYAWAN',64,128);
+  g.fillStyle='#fff';g.font='800 44px '+F;g.fillText('TANDA TERIMA KAS BON',64,206);
+  g.fillStyle='rgba(255,255,255,.85)';g.font='600 21px '+F;g.fillText('No. '+it.id,64,242);
+
+  let y=312;
+  const baris=(lbl,val)=>{
+    g.fillStyle='#8790a8';g.font='700 18px '+F;g.fillText(lbl.toUpperCase(),64,y);
+    g.fillStyle='#0f1a3d';g.font='700 27px '+F;
+    const ls=bungkus(g,val||'-',W-128).slice(0,2);
+    ls.forEach((l,i)=>g.fillText(l,64,y+36+i*33));
+    y+=36+ls.length*33+18;
+  };
+  baris('Tanggal',tglPanjang(it.tgl));
+  baris('Nama karyawan',it.nama+(it.jabatan&&it.jabatan!=='-'?'  ·  '+it.jabatan:''));
+  baris('Keterangan',it.ket||'Kas Bon');
+
+  y+=6;
+  rrect(g,64,y,W-128,200,26);g.fillStyle='#e9edff';g.fill();
+  g.fillStyle='#3d5afe';g.font='800 19px '+F;g.fillText('JUMLAH KAS BON',92,y+46);
+  const tx=rpf(it.jumlah);let fs=62;g.font='800 '+fs+'px '+F;
+  while(g.measureText(tx).width>W-128-56&&fs>30){fs-=2;g.font='800 '+fs+'px '+F}
+  g.fillStyle='#0f1a3d';g.fillText(tx,92,y+112);
+  g.fillStyle='#39446a';g.font='italic 600 20px '+F;
+  bungkus(g,'Terbilang: '+terbilang(it.jumlah)+' rupiah',W-128-56).slice(0,2).forEach((l,i)=>g.fillText(l,92,y+148+i*27));
+  y+=200+32;
+
+  baris('Sisa kas bon setelah transaksi',it.saldo==null?'-':(it.saldo===0?'Lunas':rpf(it.saldo)));
+
+  rrect(g,64,y,W-128,96,24);g.fillStyle=ok?'#e6f7ee':'#fff1e1';g.fill();
+  g.fillStyle=ok?'#17a05d':'#ff8a2a';g.beginPath();g.arc(114,y+48,24,0,Math.PI*2);g.fill();
+  g.strokeStyle='#fff';g.lineWidth=6;g.lineCap='round';g.lineJoin='round';g.beginPath();
+  if(ok){g.moveTo(102,y+48);g.lineTo(111,y+57);g.lineTo(127,y+39)}else{g.moveTo(114,y+35);g.lineTo(114,y+50);g.moveTo(114,y+60);g.lineTo(114,y+60.5)}
+  g.stroke();
+  g.font='800 26px '+F;g.fillStyle=ok?'#12804a':'#c4631a';
+  g.fillText(ok?'DISETUJUI KARYAWAN':'MENUNGGU PERSETUJUAN',160,y+43);
+  g.font='600 18px '+F;g.fillStyle='#39446a';
+  g.fillText(ok?wktPanjang(it.disetujui):'Dibuat '+wktPanjang(it.dibuat),160,y+74);
+  y+=96+36;
+
+  const kw=(W-128-30)/2;
+  [['Diberikan oleh','Admin Merdeka Jaya','Dibuat: '+(wktPanjang(it.dibuat)||'-'),64,'Admin'],
+   ['Diterima oleh',it.nama,ok?'Disetujui digital: '+wktPanjang(it.disetujui):'Belum disetujui',64+kw+30,ok?String(it.nama).split(' ')[0]:'']
+  ].forEach(([a,b,c2,x,sig])=>{
+    g.fillStyle='#8790a8';g.font='700 18px '+F;g.fillText(a.toUpperCase(),x,y);
+    if(sig){g.fillStyle='#3d5afe';g.font='italic 800 38px Georgia,serif';g.fillText(sig,x+4,y+72)}
+    g.strokeStyle='#cfd5e6';g.lineWidth=2;g.beginPath();g.moveTo(x,y+92);g.lineTo(x+kw,y+92);g.stroke();
+    let f2=22;g.font='800 '+f2+'px '+F;
+    while(g.measureText(b).width>kw&&f2>13){f2--;g.font='800 '+f2+'px '+F}
+    g.fillStyle='#0f1a3d';g.fillText(b,x,y+122);
+    g.fillStyle='#8790a8';g.font='600 16px '+F;
+    bungkus(g,c2,kw).slice(0,2).forEach((l,k)=>g.fillText(l,x,y+148+k*21));
+  });
+
+  g.setLineDash([8,8]);g.strokeStyle='#d8dded';g.lineWidth=2;g.beginPath();g.moveTo(64,H-122);g.lineTo(W-64,H-122);g.stroke();g.setLineDash([]);
+  g.fillStyle='#8790a8';g.font='600 17px '+F;g.textAlign='center';
+  g.fillText('Dokumen ini dibuat otomatis oleh aplikasi Kas Bon Merdeka Jaya.',W/2,H-84);
+  g.fillText('Simpan sebagai bukti. Hubungi admin bila ada data yang tidak sesuai.',W/2,H-58);
+  g.textAlign='left';
+  return c;
+}
+
+/* ---- PDF sederhana: satu halaman berisi gambar nota (JPEG) ---- */
+function buatPdf(jpgUrl,w,h){
+  const bin=atob(jpgUrl.split(',')[1]),img=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)img[i]=bin.charCodeAt(i);
+  const pw=Math.round(w/2),ph=Math.round(h/2),enc=new TextEncoder(),parts=[],offs=[];let len=0;
+  const push=b=>{parts.push(b);len+=b.length},str=t=>push(enc.encode(t));
+  str('%PDF-1.4\n');
+  offs[1]=len;str('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+  offs[2]=len;str('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n');
+  offs[3]=len;str('3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+pw+' '+ph+'] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>\nendobj\n');
+  offs[4]=len;str('4 0 obj\n<< /Type /XObject /Subtype /Image /Width '+w+' /Height '+h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+img.length+' >>\nstream\n');
+  push(img);str('\nendstream\nendobj\n');
+  const cs='q '+pw+' 0 0 '+ph+' 0 0 cm /Im0 Do Q';
+  offs[5]=len;str('5 0 obj\n<< /Length '+cs.length+' >>\nstream\n'+cs+'\nendstream\nendobj\n');
+  const xr=len;
+  str('xref\n0 6\n0000000000 65535 f \n');
+  for(let i=1;i<=5;i++)str(String(offs[i]).padStart(10,'0')+' 00000 n \n');
+  str('trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF');
+  return new Blob(parts,{type:'application/pdf'});
+}
+function unduh(blob,nama){
+  const u=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=u;a.download=nama;document.body.appendChild(a);a.click();
+  setTimeout(()=>{a.remove();URL.revokeObjectURL(u)},1500);
+}
+
+/* ---- penampil nota (dipakai admin & karyawan) ---- */
+async function bukaNota(it,peran){
+  NOTA_CUR=it;NOTA_ROLE=peran;NOTA_CANVAS=null;
+  const ok=it.status==='Disetujui';
+  $('nv-s').textContent=ok?'Disetujui karyawan pada '+wktPanjang(it.disetujui)+'.':(peran==='karyawan'?'Periksa rinciannya. Tekan Setuju jika jumlah ini sesuai dengan yang Anda terima.':'Menunggu persetujuan karyawan.');
+  $('nv-ok').hidden=!(peran==='karyawan'&&!ok);
+  $('nv-share').hidden=!navigator.share;
+  $('nv-img').removeAttribute('src');
+  $('nvmod').hidden=false;
+  try{
+    const c=await buatNota(it);
+    if(NOTA_CUR!==it)return;
+    NOTA_CANVAS=c;$('nv-img').src=c.toDataURL('image/jpeg',.9);
+  }catch(e){toast('Gagal membuat nota.')}
+}
+const namaBerkas=ext=>'Nota-KasBon-'+(NOTA_CUR?NOTA_CUR.id:'')+'.'+ext;
+$('nv-x').onclick=()=>{$('nvmod').hidden=true};
+$('nvmod').addEventListener('click',e=>{if(e.target===$('nvmod'))$('nvmod').hidden=true});
+$('nv-png').onclick=()=>{if(!NOTA_CANVAS)return;NOTA_CANVAS.toBlob(b=>b&&unduh(b,namaBerkas('png')),'image/png')};
+$('nv-pdf').onclick=()=>{if(!NOTA_CANVAS)return;unduh(buatPdf(NOTA_CANVAS.toDataURL('image/jpeg',.92),NOTA_CANVAS.width,NOTA_CANVAS.height),namaBerkas('pdf'))};
+$('nv-share').onclick=()=>{
+  if(!NOTA_CANVAS)return;
+  NOTA_CANVAS.toBlob(b=>{
+    if(!b)return;
+    const f=new File([b],namaBerkas('png'),{type:'image/png'});
+    const data=(navigator.canShare&&navigator.canShare({files:[f]}))?{files:[f],title:'Tanda Terima Kas Bon'}:{title:'Tanda Terima Kas Bon',text:'Tanda terima kas bon '+NOTA_CUR.id};
+    navigator.share(data).catch(()=>{});
+  },'image/png');
+};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('nvmod').hidden)$('nvmod').hidden=true});
+
+/* ---- karyawan: notifikasi & persetujuan ---- */
+function renderKb(){
+  const n=KB_ITEMS.filter(x=>x.status!=='Disetujui').length;
+  $('kbbanner').hidden=!n;
+  if(n)$('kbb-t').textContent=n+' kas bon menunggu persetujuan Anda';
+  $('kbcard').hidden=!KB_ITEMS.length;
+  $('kb-cnt').textContent=KB_ITEMS.length+' nota';
+  $('kb-list').innerHTML=KB_ITEMS.slice(0,8).map(it=>
+    `<div class="kbi" data-id="${esc(it.id)}"><div class="kic">${SVG_NOTA}</div><div class="m"><b>${esc(it.ket||'Kas Bon')}</b><span>${esc(tgl(it.tgl))} · ${esc(it.id)}</span></div><div class="r"><b>${rpf(it.jumlah)}</b>${chipSt(it)}</div></div>`).join('');
+}
+function segarkan(){
+  if(!CUR_NAMA||!CUR_PIN)return;
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'cekHutang',nama:CUR_NAMA,pin:CUR_PIN})})
+    .then(r=>r.json()).then(o=>{if(o.ok){saveSess(CUR_NAMA,CUR_PIN,o);show(o,true)}}).catch(()=>{});
+}
+function muatNotif(){
+  if(!CUR_NAMA||!CUR_PIN)return;
+  const nm=CUR_NAMA;
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'karyawanKasBon',nama:CUR_NAMA,pin:CUR_PIN})})
+    .then(r=>r.json())
+    .then(o=>{
+      if(!o.ok||nm!==CUR_NAMA)return;
+      const items=o.items||[];
+      const baru=KB_KNOWN!==null&&items.some(x=>!KB_KNOWN[x.id]);
+      KB_ITEMS=items;KB_KNOWN={};items.forEach(x=>{KB_KNOWN[x.id]=1});
+      renderKb();
+      if(baru)segarkan();
+      const w=items.find(x=>x.status!=='Disetujui'&&!kbPopped[x.id]);
+      if(w&&$('nvmod').hidden&&$('pmod').hidden){kbPopped[w.id]=1;ding();bukaNota(w,'karyawan')}
+    })
+    .catch(()=>{});
+}
+function resetKb(){
+  KB_ITEMS=[];KB_KNOWN=null;kbPopped={};
+  $('kbbanner').hidden=true;$('kbcard').hidden=true;$('nvmod').hidden=true;
+}
+$('kb-list').addEventListener('click',e=>{
+  const r=e.target.closest('.kbi');if(!r)return;
+  const it=KB_ITEMS.find(x=>x.id===r.dataset.id);if(it)bukaNota(it,'karyawan');
+});
+$('kbbanner').addEventListener('click',()=>{
+  const w=KB_ITEMS.find(x=>x.status!=='Disetujui');if(w)bukaNota(w,'karyawan');
+});
+$('nv-ok').onclick=()=>{
+  const it=NOTA_CUR;if(!it||busyKb)return;
+  busyKb=true;$('nv-ok').disabled=true;$('nv-ok').textContent='Menyimpan…';
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'setujuKasBon',nama:CUR_NAMA,pin:CUR_PIN,id:it.id})})
+    .then(r=>r.json())
+    .then(o=>{
+      if(o.ok&&o.item){
+        const i=KB_ITEMS.findIndex(x=>x.id===o.item.id);if(i>-1)KB_ITEMS[i]=o.item;
+        renderKb();toast('Kas bon disetujui ✓');bukaNota(o.item,'karyawan');
+      }else toast(o.msg||'Gagal menyimpan persetujuan.');
+    })
+    .catch(()=>toast('Terjadi kesalahan jaringan.'))
+    .then(()=>{busyKb=false;$('nv-ok').disabled=false;$('nv-ok').textContent='✓ Setuju & Terima Kas Bon'});
+};
+setInterval(()=>{if(!document.hidden&&!$('out').hidden)muatNotif()},120000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('out').hidden)muatNotif()});
+
+/* ---- admin: daftar & pembuatan kas bon ---- */
+function renderKbAdm(){
+  $('a-kb').innerHTML=KB_ADM.length
+    ?KB_ADM.map(it=>`<div class="kbi" data-id="${esc(it.id)}"><div class="kic">${SVG_NOTA}</div><div class="m"><b>${esc(it.nama)}</b><span>${esc(it.ket||'Kas Bon')} · ${esc(tgl(it.tgl))}</span></div><div class="r"><b>${rpf(it.jumlah)}</b>${chipSt(it)}</div></div>`).join('')
+    :'<div class="empty">Belum ada kas bon dari admin.</div>';
+}
+function muatKbAdmin(){
+  $('a-kb').innerHTML='<div class="empty">Memuat…</div>';
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'adminKasBonList',pass:admPass()})})
+    .then(r=>r.json())
+    .then(o=>{
+      if(!o.ok){$('a-kb').innerHTML='<div class="empty">'+esc(o.msg||'Gagal memuat.')+'</div>';return}
+      KB_ADM=o.items||[];renderKbAdm();
+    })
+    .catch(()=>{$('a-kb').innerHTML='<div class="empty">Terjadi kesalahan jaringan.</div>'});
+}
+function refreshAdm(){
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'adminData',pass:admPass()})})
+    .then(r=>r.json()).then(o=>{if(o.ok)showAdm(o,true)}).catch(()=>{});
+}
+$('a-kb').addEventListener('click',e=>{
+  const r=e.target.closest('.kbi');if(!r)return;
+  const it=KB_ADM.find(x=>x.id===r.dataset.id);if(it)bukaNota(it,'admin');
+});
+$('kb-new').onclick=()=>{
+  $('kbn-nama').innerHTML='<option value="">— pilih karyawan —</option>'+ADM_ROWS.map(x=>`<option>${esc(x.nama)}</option>`).join('');
+  $('kbn-nama').value='';$('kbn-jml').value='';$('kbn-ket').value='';
+  $('kbn-tgl').value=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Jakarta'});
+  $('kbn-err').textContent='';$('kbmod').hidden=false;
+};
+$('kbn-no').onclick=()=>{if(!busyKb)$('kbmod').hidden=true};
+$('kbmod').addEventListener('click',e=>{if(e.target===$('kbmod')&&!busyKb)$('kbmod').hidden=true});
+$('kbn-jml').addEventListener('input',()=>{
+  const v=$('kbn-jml').value.replace(/\D/g,'').replace(/^0+/,'').slice(0,10);
+  $('kbn-jml').value=v?Number(v).toLocaleString('id-ID'):'';
+});
+['kbn-jml','kbn-ket','kbn-tgl'].forEach(id=>$(id).addEventListener('focus',()=>setTimeout(()=>$(id).scrollIntoView({block:'center',behavior:'smooth'}),350)));
+$('kbn-ok').onclick=()=>{
+  if(busyKb)return;
+  const nama=$('kbn-nama').value,jml=Number($('kbn-jml').value.replace(/\D/g,'')),ket=$('kbn-ket').value.trim(),tg=$('kbn-tgl').value,er=$('kbn-err');
+  er.textContent='';
+  if(!nama){er.textContent='Pilih karyawan dulu.';return}
+  if(!(jml>0)){er.textContent='Isi jumlah kas bon.';return}
+  if(!tg){er.textContent='Pilih tanggal.';return}
+  busyKb=true;$('kbn-ok').disabled=true;$('kbn-ok').textContent='Menyimpan…';
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'adminKasBonBaru',pass:admPass(),nama:nama,jumlah:jml,ket:ket,tgl:tg})})
+    .then(r=>r.json())
+    .then(o=>{
+      if(o.ok&&o.item){
+        $('kbmod').hidden=true;KB_ADM.unshift(o.item);renderKbAdm();
+        toast('Kas bon dibuat & dikirim ke karyawan ✓');
+        bukaNota(o.item,'admin');refreshAdm();
+      }else er.textContent=o.msg||'Gagal membuat kas bon.';
+    })
+    .catch(()=>{er.textContent='Terjadi kesalahan jaringan.'})
+    .then(()=>{busyKb=false;$('kbn-ok').disabled=false;$('kbn-ok').textContent='Buat & Kirim'});
 };
 
 /* ===== BUNYI KEYPAD saat mengetik PIN ===== */
